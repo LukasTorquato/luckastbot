@@ -1,0 +1,2 @@
+# luckastbot
+TCC Trading Bot
