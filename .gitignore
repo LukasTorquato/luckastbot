@@ -128,3 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 luckastbotworkspc.code-workspace
+candles.csv
+last500.csv
