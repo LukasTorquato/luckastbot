@@ -9,7 +9,7 @@ from tradingview_ta import TA_Handler, Interval, Exchange
 
 
 # Conecta API
-client = Client(API_KEY, API_SECRET)
+client = Client(BN_API_KEY, BN_API_SECRET)
 '''
 # prices = client.get_all_tickers()  # Pega todos os preços de todos os pares
 
@@ -21,7 +21,7 @@ for order in orders:
     print(order)
 
 '''
-csvfile = open('datasets/BTCUSDT.csv', 'w', newline='')
+csvfile = open('datasets/ETHUSDT.csv', 'w', newline='')
 
 fieldnames = ['Time Init', 'Open', 'High', 'Low',
               'Close', 'Volume', 'Time Close', 'QAV', 'N Trades']
@@ -29,7 +29,7 @@ writer = csv.writer(csvfile, delimiter=',')
 writer.writerow(fieldnames)
 
 klines = client.get_historical_klines(
-    "BTCUSDT", Client.KLINE_INTERVAL_15MINUTE, "1 Jan, 2012", "23 Feb, 2021")  # pega o candle do intervalo de tempo
+    "ETHUSDT", Client.KLINE_INTERVAL_4HOUR, "1 Jan, 2012", "23 Feb, 2021")  # pega o candle do intervalo de tempo
 
 for kline in klines:
     writer.writerow(kline[0:9])
