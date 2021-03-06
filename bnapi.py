@@ -1,5 +1,3 @@
-# import ta-lib
-# import tradingview-ta
 import csv
 import websocket
 from config import *
