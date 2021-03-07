@@ -14,7 +14,8 @@ import matplotlib.pyplot as plt
 import datetime
 import pytz
 from plotly import tools
-import chart_studio.plotly as py
+import plotly.graph_objects as go
+
 
 # init_notebook_mode(connected=True)
 # define a conversion function for the native timestamps in the csv file
@@ -102,7 +103,7 @@ def plot_graph(data):
 
 
 # split data
-split_date = '25-Jun-2020'
+split_date = '25-Feb-2021'
 data_train = data.loc[data.index <= split_date].copy()
 data_test = data.loc[data.index > split_date].copy()
 
@@ -123,7 +124,7 @@ model.add(LSTM(128, activation="sigmoid", input_shape=(1, 1)))
 model.add(Dropout(0.2))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
-model.fit(X_train, y_train, epochs=50, batch_size=50, verbose=2)
+model.fit(X_train, y_train, epochs=100, batch_size=50, verbose=2)
 
 model.summary()
 
@@ -141,16 +142,16 @@ data_all = pd.concat([data_test, data_train], sort=False)
 # saving the predicted values in a common data frame for future comparision
 final_data = data_all
 final_data = final_data.reset_index()
-# final_data.info()
+data_all.info()
 final_data = final_data.rename(columns={'Price_Prediction': 'lstm'})
 final_data = final_data[['time', 'close', 'lstm']]
 
+
+#_ = data_all[['close', 'Price_Prediction']].plot(figsize=(15, 5)).show()
 f, ax = plt.subplots(1)
 f.set_figheight(5)
 f.set_figwidth(15)
 _ = data_all[['Price_Prediction', 'close']].plot(ax=ax,
-                                                 style=['-', '.'])
-ax.set_xbound(lower='08-01-2018', upper='09-01-2018')
-ax.set_ylim(0, 10000)
-plot = plt.subtitle('August 2018 Forecast vs Actuals')
-#_ = data_all[['close', 'Price_Prediction']].plot(figsize=(15, 5))
+                                                 style=['-', '-'])
+plot = plt.suptitle('Early March 2021 Forecast vs Actuals')
+plt.show()
