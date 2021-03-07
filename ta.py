@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 
 
-def ta_rsi(close):
+def ta_rsi(close, period):
     #rsi = np.array()
-    rsi = talib.RSI(close, timeperiod=14)
+    rsi = talib.RSI(close, timeperiod=period)
     return np.around(rsi, decimals=6)
 
 
