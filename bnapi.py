@@ -1,24 +1,51 @@
-import csv
-import websocket
-import numpy as np
-from ta import *
-from config import *
 from binance.client import Client
 from binance.enums import *
-from tradingview_ta import TA_Handler, Interval, Exchange
+from config import *
+from tanalysis import *
+import numpy as np
+import websocket
 
 
-# Conecta API
-client = Client(BN_API_KEY, BN_API_SECRET)
-'''
-# prices = client.get_all_tickers()  # Pega todos os preços de todos os pares
+class BinanceAPI:
+    def __init__(self):
+        # Conecta a API
+        self.client = Client(BN_API_KEY, BN_API_SECRET)
+        self.info = self.client.get_account()
+        # Dataframe de Balances da conta
+        self.balances = pd.DataFrame()
+        for alias in np.concatenate([WORKING_ASSETS, WORKING_STABLE]):
+            assetinfo = self.client.get_asset_balance(asset=alias)
+            self.balances = self.balances.append(
+                assetinfo, ignore_index=True)
 
-orders = client.get_all_orders(symbol='ADABUSD')
-# cancelorder = client.cancel_order(
-#     symbol='ADABUSD', orderId=orders[0]['orderId'])
+        self.openOrders = pd.DataFrame(
+            self.client.get_open_orders())
 
-for order in orders:
-    print(order)
+    def make_buy_order(self, pair, amount, price):
+        self.client.create_order(symbol=pair,
+                                 side=SIDE_BUY, type=ORDER_TYPE_LIMIT,
+                                 timeInForce=TIME_IN_FORCE_GTC, quantity=amount, price=price)
+        self.update_open_orders()
+
+    def make_sell_order(self, pair, amount, price):
+        pass
+
+    def update_open_orders(self):
+        self.openOrders = pd.DataFrame(self.client.get_open_orders())
+
+    def cancel_order(self, pair, id):
+        self.client.cancel_order(symbol=pair, orderId=id)
+        self.update_open_orders()
+
+    def get_info():
+        pass
+
+
+bnComm = BinanceAPI()
+pair = bnComm.openOrders['symbol'][0]
+orderid = bnComm.openOrders['orderId'][0]
+bnComm.cancel_order(pair, orderid)
+print(bnComm.openOrders)
 
 '''
 csvfile = open('datasets/BTCUSDT-1D-RSI.csv', 'w', newline='')
@@ -42,3 +69,4 @@ for kline in klines:
     writer.writerow(kline[0:10])
 
 csvfile.close()
+'''
