@@ -1,5 +1,6 @@
 from binance.client import Client
 from binance.enums import *
+from requests import NullHandler
 from config import *
 from tanalysis import *
 import numpy as np
@@ -17,9 +18,8 @@ class BinanceAPI:
             assetinfo = self.client.get_asset_balance(asset=alias)
             self.balances = self.balances.append(
                 assetinfo, ignore_index=True)
-
-        self.openOrders = pd.DataFrame(
-            self.client.get_open_orders())
+        # Pega as ordens abertas
+        self.update_open_orders()
 
     def make_buy_order(self, pair, amount, price):
         self.client.create_order(symbol=pair,
@@ -28,23 +28,55 @@ class BinanceAPI:
         self.update_open_orders()
 
     def make_sell_order(self, pair, amount, price):
-        pass
+        self.client.create_order(symbol=pair,
+                                 side=SIDE_SELL, type=ORDER_TYPE_LIMIT,
+                                 timeInForce=TIME_IN_FORCE_GTC, quantity=amount, price=price)
+        self.update_open_orders()
 
     def update_open_orders(self):
-        self.openOrders = pd.DataFrame(self.client.get_open_orders())
+        try:
+            self.openOrders = pd.DataFrame(
+                self.client.get_open_orders()).set_index('orderId')
+        except:
+            self.openOrders = pd.DataFrame()
 
     def cancel_order(self, pair, id):
-        self.client.cancel_order(symbol=pair, orderId=id)
-        self.update_open_orders()
+        try:
+            self.client.cancel_order(symbol=pair, orderId=id)
+            self.update_open_orders()
+        except:
+            print('Order not found.')
+
+    def cancel_all_pair_orders(self, pair):
+        try:
+            orderids = self.openOrders[self.openOrders['symbol']
+                                       == pair].index.tolist()
+            for order in orderids:
+                self.client.cancel_order(symbol=pair, orderId=order)
+            self.update_open_orders()
+        except:
+            print('Pair not found.')
+
+    def cancel_all_orders(self):
+        try:
+            if not self.openOrders.empty:
+                pairs = self.openOrders['symbol'].tolist()
+                for pair in pairs:
+                    self.cancel_all_pair_orders(pair)
+                self.update_open_orders()
+        except:
+            print('No orders found.')
 
     def get_info():
         pass
 
 
 bnComm = BinanceAPI()
-pair = bnComm.openOrders['symbol'][0]
-orderid = bnComm.openOrders['orderId'][0]
-bnComm.cancel_order(pair, orderid)
+print(bnComm.openOrders)
+bnComm.cancel_all_orders()
+
+# print(orderids)
+
 print(bnComm.openOrders)
 
 '''
