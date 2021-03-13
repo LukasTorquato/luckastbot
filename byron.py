@@ -1,9 +1,4 @@
-import numpy as np
-import pandas as pd
-import bnapi
-import config
-import tanalysis as ta
-from tradingview_ta import TA_Handler, Interval, Exchange
+from config import *
 
 
 class ByronBot:

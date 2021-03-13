@@ -5,7 +5,7 @@ class BinanceAPI:
 
     def __init__(self):
         # Conecta a API
-        print("# Starting Binance connection...")
+        print("##### Starting Binance connection #####")
         self.client = Client(BN_API_KEY, BN_API_SECRET)
         # Verifica se servidor está normal ou sob manutenção
         self.server_status = self.client.get_system_status()

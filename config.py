@@ -1,8 +1,10 @@
+from tradingview_ta import TA_Handler, Interval, Exchange
 from binance.client import Client
 from binance.enums import *
 from binance.exceptions import *
-from tanalysis import *
 import numpy as np
+import pandas as pd
+import talib
 
 # Binance
 WEB_SOCKET = "wss://stream.binance.com:9443/ws/"  # btcusdt@kline_5m
