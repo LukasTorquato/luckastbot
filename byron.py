@@ -1,10 +1,11 @@
 from config import *
+from technical_analysis import *
 
 
 class ByronBot:
 
     def __init__(self):
-        self.bnComm = bnapi.BinanceAPI()
+        self.bnc = BinanceAPI()
         pass
 
     def run():
