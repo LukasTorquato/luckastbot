@@ -2,6 +2,7 @@ from tradingview_ta import TA_Handler, Interval, Exchange
 from binance.client import Client
 from binance.enums import *
 from binance.exceptions import *
+import matplotlib
 import numpy as np
 import pandas as pd
 import talib
@@ -20,7 +21,6 @@ INACTIVE_SUPPLY = "https://api.glassnode.com/v1/metrics/supply/active_more_1y_pe
 # Settings
 MARKET_TREND = 1  # 1 - BULL Market / 0 - BEAR Market
 AGGRESSIVENESS = 0
-WORKING_ASSETS = ['BTC', 'ADA', 'ETH', 'BNB']
-WORKING_STABLE = ['USDT', 'BUSD', 'BRL']
-WORKING_TIMEFRAMES = [KLINE_INTERVAL_1MINUTE, KLINE_INTERVAL_5MINUTE,
-                      KLINE_INTERVAL_15MINUTE, KLINE_INTERVAL_1HOUR, KLINE_INTERVAL_4HOUR, KLINE_INTERVAL_1DAY]
+WORKING_ASSETS = ['BTC']  # , 'ADA', 'ETH', 'BNB']
+WORKING_STABLE = ['USDT']  # , 'BUSD', 'BRL']
+WORKING_TIMEFRAMES = [KLINE_INTERVAL_1DAY]

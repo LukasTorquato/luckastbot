@@ -8,6 +8,7 @@ TCC Trading Bot
 - pip install python-binance
 - pip install websocket
 - pip install tradingview-ta
+- pip install backtrader
 - TA-Lib :
   - https://github.com/mrjbq7/ta-lib = README
   - Follow every step
