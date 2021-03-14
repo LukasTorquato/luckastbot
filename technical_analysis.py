@@ -18,7 +18,7 @@ class TAnalysis:
                     pricesdf['High'], pricesdf['Low'], pricesdf['Close'])
                 self.oscillators[alias][interval]['CCI'] = self.update_cci(
                     pricesdf['High'], pricesdf['Low'], pricesdf['Close'])
-                self.oscillators[alias][interval]['CCI'] = self.update_adx(
+                self.oscillators[alias][interval]['ADX'] = self.update_adx(
                     pricesdf['High'], pricesdf['Low'], pricesdf['Close'])
 
     def update_rsi(self, prices):
@@ -37,12 +37,12 @@ class TAnalysis:
         cci = talib.CCI(high, low, close, timeperiod=20)
         return np.around(cci, decimals=4)
 
-    def update_cci(self, high, low, close):
+    def update_adx(self, high, low, close):
         # Retorna uma matrix Nx2
-        adx = talib.ADX(high, low, close, timeperiod=20)
+        adx = talib.ADX(high, low, close, timeperiod=14)
         return np.around(adx, decimals=4)
 
 
-bnComm = BinanceAPI()
-ta = TAnalysis(bnComm)
-print(ta.oscillators['BTCUSDT'][KLINE_INTERVAL_1DAY]['CCI'])
+#bnComm = BinanceAPI()
+#ta = TAnalysis(bnComm)
+# print(ta.oscillators['BTCUSDT'][KLINE_INTERVAL_1DAY]['CCI'])
