@@ -1,47 +1,27 @@
-from binance_api import BinanceAPI
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 from config import *
 from binance_api import *
 import backtrader as bt
 
 
-class PandasData(bt.feed.DataBase):
-    '''
-    The ``dataname`` parameter inherited from ``feed.DataBase`` is the pandas
-    DataFrame
-    '''
+class RSIStrategy(bt.Strategy):
 
-    params = (
-        # Possible values for datetime (must always be present)
-        #  None : datetime is the "index" in the Pandas Dataframe
-        #  -1 : autodetect position or case-wise equal name
-        #  >= 0 : numeric index to the colum in the pandas dataframe
-        #  string : column name (as index) in the pandas dataframe
-        ('datetime', "Open Time"),
+    def __init__(self):
+        super().__init__()
+        self.rsi = bt.talib.RSI(self.data, period=14)
 
-        # Possible values below:
-        #  None : column not present
-        #  -1 : autodetect position or case-wise equal name
-        #  >= 0 : numeric index to the colum in the pandas dataframe
-        #  string : column name (as index) in the pandas dataframe
-        ('open', "Open"),
-        ('high', "High"),
-        ('low', "Low"),
-        ('close', "Close"),
-        ('volume', "Outer Volume"),
-    )
+    def next(self):
+        if self.rsi < 25 and not self.position:
+            self.buy(size=41000)
+        if self.rsi > 90 and self.position:
+            self.close()
 
 
 cerebro = bt.Cerebro()
-
-bnc = BinanceAPI()
-pdata = bnc.klines[WORKING_ASSETS[0]+WORKING_STABLE[0]
-                   ][WORKING_TIMEFRAMES[0]]  # BTCUSDT 1D
-#pdata["Open Time"] = pd.to_datetime(pdata["Open Time"], unit='ms')
-#pdata = pdata.set_index('Open Time')
-print(pdata)
-
-data = PandasData(dataname=pdata)
+# Add a strategy
+cerebro.addstrategy(RSIStrategy)
+data = bt.feeds.GenericCSVData(dataname='datasets/ADAUSDT-1D.csv', dtformat=1)
 cerebro.adddata(data)
-
 cerebro.run()
 cerebro.plot()
