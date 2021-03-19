@@ -12,8 +12,8 @@ cerebro.addstrategy(RSIStrategy)
 data = bt.feeds.GenericCSVData(
     dataname='datasets/ADAUSDT-15MIN.csv',
     dtformat=1,
-    compression=15,
-    timeframe=bt.TimeFrame.Minutes)
+    compression=15,  # QTD de Minutos
+    timeframe=bt.TimeFrame.Minutes)  # Minutes - Days - Weeks
 
 cerebro.adddata(data)
 cerebro.run()
