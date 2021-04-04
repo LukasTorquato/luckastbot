@@ -1,4 +1,4 @@
-#================================================================
+# ================================================================
 #
 #   File name   : utils.py
 #   Author      : PyLessons
@@ -7,7 +7,7 @@
 #   GitHub      : https://github.com/pythonlessons/RL-Bitcoin-trading-bot
 #   Description : additional functions
 #
-#================================================================
+# ================================================================
 import pandas as pd
 from collections import deque
 import matplotlib.pyplot as plt
@@ -18,15 +18,17 @@ import os
 import cv2
 import numpy as np
 
+
 def Write_to_file(Date, net_worth, filename='{}.txt'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))):
-    for i in net_worth: 
+    for i in net_worth:
         Date += " {}".format(i)
-    #print(Date)
+    # print(Date)
     if not os.path.exists('logs'):
         os.makedirs('logs')
     file = open("logs/"+filename, 'a+')
     file.write(Date+"\n")
     file.close()
+
 
 class TradingGraph:
     # A crypto trading visualization using matplotlib made to render custom prices which come in following way:
@@ -45,20 +47,21 @@ class TradingGraph:
         # close all plots if there are open
         plt.close('all')
         # figsize attribute allows us to specify the width and height of a figure in unit inches
-        self.fig = plt.figure(figsize=(16,8)) 
+        self.fig = plt.figure(figsize=(16, 8))
 
         # Create top subplot for price axis
-        self.ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
-        
+        self.ax1 = plt.subplot2grid((6, 1), (0, 0), rowspan=5, colspan=1)
+
         # Create bottom subplot for volume which shares its x-axis
-        self.ax2 = plt.subplot2grid((6,1), (5,0), rowspan=1, colspan=1, sharex=self.ax1)
-        
+        self.ax2 = plt.subplot2grid(
+            (6, 1), (5, 0), rowspan=1, colspan=1, sharex=self.ax1)
+
         # Create a new axis for net worth which shares its x-axis with price
         self.ax3 = self.ax1.twinx()
 
         # Formatting Date
         self.date_format = mpl_dates.DateFormatter('%d-%m-%Y')
-        
+
         # Add paddings to make graph easier to view
         #plt.subplots_adjust(left=0.07, bottom=-0.1, right=0.93, top=0.97, wspace=0, hspace=0)
 
@@ -69,20 +72,19 @@ class TradingGraph:
     def Create_indicators_lists(self):
         # Create a new axis for indicatorswhich shares its x-axis with volume
         self.ax4 = self.ax2.twinx()
-        
+
         self.sma7 = deque(maxlen=self.Render_range)
         self.sma25 = deque(maxlen=self.Render_range)
         self.sma99 = deque(maxlen=self.Render_range)
-        
+
         self.bb_bbm = deque(maxlen=self.Render_range)
         self.bb_bbh = deque(maxlen=self.Render_range)
         self.bb_bbl = deque(maxlen=self.Render_range)
-        
+
         self.psar = deque(maxlen=self.Render_range)
 
         self.MACD = deque(maxlen=self.Render_range)
         self.RSI = deque(maxlen=self.Render_range)
-
 
     def Plot_indicators(self, df, Date_Render_range):
         self.sma7.append(df["sma7"])
@@ -99,27 +101,27 @@ class TradingGraph:
         self.RSI.append(df["RSI"])
 
         # Add Simple Moving Average
-        self.ax1.plot(Date_Render_range, self.sma7,'-')
-        self.ax1.plot(Date_Render_range, self.sma25,'-')
-        self.ax1.plot(Date_Render_range, self.sma99,'-')
+        self.ax1.plot(Date_Render_range, self.sma7, '-')
+        self.ax1.plot(Date_Render_range, self.sma25, '-')
+        self.ax1.plot(Date_Render_range, self.sma99, '-')
 
         # Add Bollinger Bands
-        self.ax1.plot(Date_Render_range, self.bb_bbm,'-')
-        self.ax1.plot(Date_Render_range, self.bb_bbh,'-')
-        self.ax1.plot(Date_Render_range, self.bb_bbl,'-')
+        self.ax1.plot(Date_Render_range, self.bb_bbm, '-')
+        self.ax1.plot(Date_Render_range, self.bb_bbh, '-')
+        self.ax1.plot(Date_Render_range, self.bb_bbl, '-')
 
         # Add Parabolic Stop and Reverse
-        self.ax1.plot(Date_Render_range, self.psar,'.')
+        self.ax1.plot(Date_Render_range, self.psar, '.')
 
         self.ax4.clear()
         # # Add Moving Average Convergence Divergence
-        self.ax4.plot(Date_Render_range, self.MACD,'r-')
+        self.ax4.plot(Date_Render_range, self.MACD, 'r-')
 
         # # Add Relative Strength Index
-        self.ax4.plot(Date_Render_range, self.RSI,'g-')
+        self.ax4.plot(Date_Render_range, self.RSI, 'g-')
 
     # Render the environment to the screen
-    #def render(self, Date, Open, High, Low, Close, Volume, net_worth, trades):
+    # def render(self, Date, Open, High, Low, Close, Volume, net_worth, trades):
     def render(self, df, net_worth, trades):
         Date = df["Date"]
         Open = df["Open"]
@@ -134,10 +136,11 @@ class TradingGraph:
         # before appending to deque list, need to convert Date to special format
         Date = mpl_dates.date2num([pd.to_datetime(Date)])[0]
         self.render_data.append([Date, Open, High, Low, Close])
-        
+
         # Clear the frame rendered last step
         self.ax1.clear()
-        candlestick_ohlc(self.ax1, self.render_data, width=0.8/24, colorup='green', colordown='red', alpha=0.8)
+        candlestick_ohlc(self.ax1, self.render_data, width=0.8/24,
+                         colorup='green', colordown='red', alpha=0.8)
 
         # Put all dates to one list and fill ax2 sublot with volume
         Date_Render_range = [i[0] for i in self.render_data]
@@ -150,15 +153,14 @@ class TradingGraph:
         # draw our net_worth graph on ax3 (shared with ax1) subplot
         self.ax3.clear()
         self.ax3.plot(Date_Render_range, self.net_worth, color="blue")
-        
+
         # beautify the x-labels (Our Date format)
         self.ax1.xaxis.set_major_formatter(self.date_format)
         self.fig.autofmt_xdate()
 
-        minimum = np.min(np.array(self.render_data)[:,1:])
-        maximum = np.max(np.array(self.render_data)[:,1:])
+        minimum = np.min(np.array(self.render_data)[:, 1:])
+        maximum = np.max(np.array(self.render_data)[:, 1:])
         RANGE = maximum - minimum
-
 
         # sort sell and buy orders, put arrows in appropiate order positions
         for trade in trades:
@@ -167,16 +169,18 @@ class TradingGraph:
                 if trade['type'] == 'buy':
                     high_low = trade['Low'] - RANGE*0.02
                     ycoords = trade['Low'] - RANGE*0.08
-                    self.ax1.scatter(trade_date, high_low, c='green', label='green', s = 120, edgecolors='none', marker="^")
+                    self.ax1.scatter(trade_date, high_low, c='green',
+                                     label='green', s=120, edgecolors='none', marker="^")
                 else:
                     high_low = trade['High'] + RANGE*0.02
                     ycoords = trade['High'] + RANGE*0.06
-                    self.ax1.scatter(trade_date, high_low, c='red', label='red', s = 120, edgecolors='none', marker="v")
+                    self.ax1.scatter(trade_date, high_low, c='red',
+                                     label='red', s=120, edgecolors='none', marker="v")
 
                 if self.Show_reward:
                     try:
                         self.ax1.annotate('{0:.2f}'.format(trade['Reward']), (trade_date-0.02, high_low), xytext=(trade_date-0.02, ycoords),
-                                                   bbox=dict(boxstyle='round', fc='w', ec='k', lw=1), fontsize="small")
+                                          bbox=dict(boxstyle='round', fc='w', ec='k', lw=1), fontsize="small")
                     except:
                         pass
 
@@ -190,30 +194,31 @@ class TradingGraph:
 
         """Display image with matplotlib - interrupting other tasks"""
         # Show the graph without blocking the rest of the program
-        #plt.show(block=False)
+        # plt.show(block=False)
         # Necessary to view frames before they are unrendered
-        #plt.pause(0.001)
+        # plt.pause(0.001)
 
         """Display image with OpenCV - no interruption"""
 
         # redraw the canvas
         self.fig.canvas.draw()
         # convert canvas to image
-        img = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-        img  = img.reshape(self.fig.canvas.get_width_height()[::-1] + (3,))
-        
+        img = np.fromstring(self.fig.canvas.tostring_rgb(),
+                            dtype=np.uint8, sep='')
+        img = img.reshape(self.fig.canvas.get_width_height()[::-1] + (3,))
+
         # img is rgb, convert to opencv's default bgr
         image = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
         # display image with OpenCV or any operation you like
-        cv2.imshow("Bitcoin trading bot",image)
+        cv2.imshow("Bitcoin trading bot", image)
 
         if cv2.waitKey(25) & 0xFF == ord("q"):
             cv2.destroyAllWindows()
             return
         else:
             return img
-        
+
 
 def Plot_OHCL(df):
     df_original = df.copy()
@@ -222,46 +227,48 @@ def Plot_OHCL(df):
     df["Date"] = df["Date"].apply(mpl_dates.date2num)
 
     df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']]
-    
+
     # We are using the style ‘ggplot’
     plt.style.use('ggplot')
-    
+
     # figsize attribute allows us to specify the width and height of a figure in unit inches
-    fig = plt.figure(figsize=(16,8)) 
+    fig = plt.figure(figsize=(16, 8))
 
     # Create top subplot for price axis
-    ax1 = plt.subplot2grid((6,1), (0,0), rowspan=5, colspan=1)
+    ax1 = plt.subplot2grid((6, 1), (0, 0), rowspan=5, colspan=1)
 
     # Create bottom subplot for volume which shares its x-axis
-    ax2 = plt.subplot2grid((6,1), (5,0), rowspan=1, colspan=1, sharex=ax1)
+    ax2 = plt.subplot2grid((6, 1), (5, 0), rowspan=1, colspan=1, sharex=ax1)
 
-    candlestick_ohlc(ax1, df.values, width=0.8/24, colorup='green', colordown='red', alpha=0.8)
+    candlestick_ohlc(ax1, df.values, width=0.8/24,
+                     colorup='green', colordown='red', alpha=0.8)
     ax1.set_ylabel('Price', fontsize=12)
     plt.xlabel('Date')
     plt.xticks(rotation=45)
 
     # Add Simple Moving Average
-    ax1.plot(df["Date"], df_original['sma7'],'-')
-    ax1.plot(df["Date"], df_original['sma25'],'-')
-    ax1.plot(df["Date"], df_original['sma99'],'-')
+    ax1.plot(df["Date"], df_original['sma7'], '-')
+    ax1.plot(df["Date"], df_original['sma25'], '-')
+    ax1.plot(df["Date"], df_original['sma99'], '-')
 
     # Add Bollinger Bands
-    ax1.plot(df["Date"], df_original['bb_bbm'],'-')
-    ax1.plot(df["Date"], df_original['bb_bbh'],'-')
-    ax1.plot(df["Date"], df_original['bb_bbl'],'-')
+    ax1.plot(df["Date"], df_original['bb_bbm'], '-')
+    ax1.plot(df["Date"], df_original['bb_bbh'], '-')
+    ax1.plot(df["Date"], df_original['bb_bbl'], '-')
 
     # Add Parabolic Stop and Reverse
-    ax1.plot(df["Date"], df_original['psar'],'.')
+    ax1.plot(df["Date"], df_original['psar'], '.')
 
     # # Add Moving Average Convergence Divergence
-    ax2.plot(df["Date"], df_original['MACD'],'-')
+    ax2.plot(df["Date"], df_original['MACD'], '-')
 
     # # Add Relative Strength Index
-    ax2.plot(df["Date"], df_original['RSI'],'-')
+    ax2.plot(df["Date"], df_original['RSI'], '-')
 
     # beautify the x-labels (Our Date format)
-    ax1.xaxis.set_major_formatter(mpl_dates.DateFormatter('%y-%m-%d'))# %H:%M:%S'))
+    ax1.xaxis.set_major_formatter(
+        mpl_dates.DateFormatter('%y-%m-%d'))  # %H:%M:%S'))
     fig.autofmt_xdate()
     fig.tight_layout()
-    
+
     plt.show()

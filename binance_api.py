@@ -136,7 +136,7 @@ class BinanceAPI:
             else:
                 print(e.code, e.message)
 
-    def update_recent_klines(self, pair, k_interval):
+    def update_recent_klines(self, pair, k_interval, inUnix=False):
 
         try:
             klines = pd.DataFrame()
@@ -144,6 +144,11 @@ class BinanceAPI:
             klines = klines.append(recent, ignore_index=True)
             klines = klines.rename(columns={0: 'Open Time', 1: 'Open', 2: 'High', 3: 'Low',
                                             4: 'Close', 5: 'Inner Volume', 6: 'Close Time', 7: 'Outer Volume', 8: 'N. Trades'})
+            if not inUnix:
+                klines['Open Time'] = pd.to_datetime(
+                    klines['Open Time'], unit='ms')
+                klines['Close Time'] = pd.to_datetime(
+                    klines['Close Time'], unit='ms')
             return klines.drop([9, 10, 11], axis=1)
         except BinanceAPIException as e:
             if (e.code == -1100):  # Illegal Character no Par
@@ -153,7 +158,7 @@ class BinanceAPI:
             else:
                 print(e.code, e.message)
 
-    def get_historical_klines(self, pair, k_interval, days_ago):
+    def get_historical_klines(self, pair, k_interval, days_ago, inUnix=False):
 
         try:
             klines = pd.DataFrame()
@@ -162,6 +167,13 @@ class BinanceAPI:
             klines = klines.append(history, ignore_index=True)
             klines = klines.rename(columns={0: 'Open Time', 1: 'Open', 2: 'High', 3: 'Low',
                                             4: 'Close', 5: 'Inner Volume', 6: 'Close Time', 7: 'Outer Volume', 8: 'N. Trades'})
+
+            if not inUnix:
+                klines['Open Time'] = pd.to_datetime(
+                    klines['Open Time'], unit='ms')
+                klines['Close Time'] = pd.to_datetime(
+                    klines['Close Time'], unit='ms')
+
             return klines.drop([9, 10, 11], axis=1)
         except BinanceAPIException as e:
             if (e.code == -1100):  # Illegal Character no Par
@@ -170,3 +182,17 @@ class BinanceAPI:
                 print("No Hist. klines found: Invalid Symbol - "+pair)
             else:
                 print(e.code, e.message)
+
+
+'''
+bncom = BinanceAPI()
+hist = bncom.get_historical_klines('BTCUSDT', KLINE_INTERVAL_1HOUR, 3600, True)
+hist['Open Time'] = hist['Open Time']/1000
+hist['Close Time'] = hist['Close Time']/1000
+hist['Open Time'] = pd.to_datetime(
+    hist['Open Time'], unit='s')
+hist['Close Time'] = pd.to_datetime(
+    hist['Close Time'], unit='s')
+hist.to_csv('datasets/BTCUSDT-1H.csv', index=False)
+print(hist)
+'''
