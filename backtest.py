@@ -10,11 +10,13 @@ cerebro = bt.Cerebro()
 # Add a strategy
 cerebro.addstrategy(RSIStrategy)
 data = bt.feeds.GenericCSVData(
-    dataname='datasets/ADAUSDT-15MIN.csv',
+    dataname='datasets/ADAUSDT-1D.csv',
     dtformat=1,
-    compression=15,  # QTD de Minutos
-    timeframe=bt.TimeFrame.Minutes)  # Minutes - Days - Weeks
+    compression=1,  # QTD de Minutos - Horas - Dias
+    timeframe=bt.TimeFrame.Days)  # Minutes - Hours - Days
 
 cerebro.adddata(data)
+
 cerebro.run()
+
 cerebro.plot()

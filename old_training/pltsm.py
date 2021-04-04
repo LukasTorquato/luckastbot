@@ -5,15 +5,12 @@ from keras.layers import LSTM
 from keras.layers import Dense
 from keras.models import Sequential
 from sklearn.preprocessing import MinMaxScaler
-import gc
 import plotly.graph_objs as go
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns
 import matplotlib.pyplot as plt
 import datetime
 import pytz
-from plotly import tools
 import plotly.graph_objects as go
 
 
