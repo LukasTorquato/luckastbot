@@ -182,17 +182,3 @@ class BinanceAPI:
                 print("No Hist. klines found: Invalid Symbol - "+pair)
             else:
                 print(e.code, e.message)
-
-
-'''
-bncom = BinanceAPI()
-hist = bncom.get_historical_klines('BTCUSDT', KLINE_INTERVAL_1HOUR, 3600, True)
-hist['Open Time'] = hist['Open Time']/1000
-hist['Close Time'] = hist['Close Time']/1000
-hist['Open Time'] = pd.to_datetime(
-    hist['Open Time'], unit='s')
-hist['Close Time'] = pd.to_datetime(
-    hist['Close Time'], unit='s')
-hist.to_csv('datasets/BTCUSDT-1H.csv', index=False)
-print(hist)
-'''

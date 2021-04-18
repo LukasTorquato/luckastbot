@@ -38,7 +38,7 @@ class CustomAgent:
         self.log_name = datetime.now().strftime("%Y_%m_%d_%H_%M")+"_Crypto_trader"
 
         # State size contains Market+Orders history for the last lookback_window_size steps
-        #self.state_size = (lookback_window_size, 10)
+        # self.state_size = (lookback_window_size, 10)
         # 10 standard information +9 indicators
         self.state_size = (lookback_window_size, 10+9)
 
@@ -52,8 +52,8 @@ class CustomAgent:
         self.Actor = self.Critic = Shared_Model(
             input_shape=self.state_size, action_space=self.action_space.shape[0], lr=self.lr, optimizer=self.optimizer, model=self.model)
         # Create Actor-Critic network model
-        #self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
-        #self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        # self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        # self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
 
     # create tensorboard writer
     def create_writer(self, initial_balance, normalize_value, train_episodes):
@@ -360,7 +360,7 @@ class CustomEnv:
 
     # render environment
     def render(self, visualize=False):
-        #print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
+        # print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
         if visualize:
             # Render the environment to the screen
             img = self.visualization.render(
@@ -448,10 +448,10 @@ def test_agent(env, agent, visualize=True, test_episodes=10, folder="", name="Cr
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('./BTCUSD_1h.csv')
-    df = df.sort_values('Date')
+    df = pd.read_csv('../datasets/BTCUSDT-1H.csv')
+    # df = df.sort_values('Date')
     df = AddIndicators(df)  # insert indicators to df
-
+""" 
     lookback_window_size = 50
     test_window = 720*3  # 3 months
     # we leave 100 to have properly calculated indicators
@@ -459,13 +459,13 @@ if __name__ == "__main__":
     test_df = df[-test_window-lookback_window_size:]
 
     # single processing training
-    #agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, optimizer=Adam, batch_size = 32, model="Dense")
-    #train_env = CustomEnv(train_df, lookback_window_size=lookback_window_size)
-    #train_agent(train_env, agent, visualize=False, train_episodes=50000, training_batch_size=500)
-
-    # multiprocessing training/testing. Note - run from cmd or terminal
     agent = CustomAgent(lookback_window_size=lookback_window_size,
                         lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="Dense")
-    #train_multiprocessing(CustomEnv, agent, train_df, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
-    test_multiprocessing(CustomEnv, agent, test_df, num_worker=16, visualize=False, test_episodes=1000,
-                         folder="2021_01_21_20_06_Crypto_trader", name="1984.93_Crypto_trader", comment="Dense")
+    train_env = CustomEnv(train_df, lookback_window_size=lookback_window_size)
+    train_agent(train_env, agent, visualize=False,
+                train_episodes=50000, training_batch_size=500)
+ """
+# multiprocessing training/testing. Note - run from cmd or terminal
+# agent = CustomAgent(lookback_window_size=lookback_window_size,lr = 0.00001, epochs = 5, optimizer = Adam, batch_size = 32, model = "Dense")
+# train_multiprocessing(CustomEnv, agent, train_df, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
+# test_multiprocessing(CustomEnv, agent, test_df, num_worker=16, visualize=False, test_episodes=1000, folder="2021_01_21_20_06_Crypto_trader", name="1984.93_Crypto_trader", comment="Dense")
