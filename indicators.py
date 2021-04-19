@@ -21,25 +21,50 @@ from utils import Plot_OHCL
 
 
 def add_volume_indicators(df):
-    pass
+    # On-balance volume (OBV)
+    if VOLUME_INDICATORS["OBV"]:
+        df["obv"] = on_balance_volume(
+            close=df["Close"], volume=df["Volume"], fillna=True)
 
 
-def add_momentum_indicators(df):
+def add_momentum_indicators(df, period):
 
-    # Relative Strength Index (RSI) indicator
+    # Relative Strength Index (RSI)
     if MOMENTUM_INDICATORS["RSI"]:
-        df["RSI"] = rsi(close=df["Close"], window=14, fillna=True)
+        df["rsi"] = rsi(close=df["Close"], window=period, fillna=True)
+
+    # Stochastic Oscillator (STOCH)
+    if MOMENTUM_INDICATORS["STOCH"]:
+        df["stoch"] = stoch(close=df["Close"], high=df["High"],
+                            low=df["Low"], window=period, fillna=True)
+        df["stochs"] = stoch_signal(
+            close=df["Close"], high=df["High"], low=df["Low"], window=period, fillna=True)
 
     # Stochastic RSI (SRSI)
-    if MOMENTUM_INDICATORS["STOCH"]:
-        df["stoch"] = stochrsi(close=df["Close"], window=14, fillna=True)
-        df["stochd"] = stochrsi_d(close=df["Close"], window=14, fillna=True)
-        df["stochk"] = stochrsi_k(close=df["Close"], window=14, fillna=True)
+    if MOMENTUM_INDICATORS["SRSI"]:
+        df["srsi"] = stochrsi(close=df["Close"], window=period, fillna=True)
+        df["srsid"] = stochrsi_d(close=df["Close"], window=period, fillna=True)
+        df["srsik"] = stochrsi_k(close=df["Close"], window=period, fillna=True)
+
+    # Awesome Oscillator (AO)
+    if MOMENTUM_INDICATORS["AO"]:
+        df["ao"] = awesome_oscillator(
+            high=df["High"], low=df["Low"], fillna=True)
+
+    # Williams %R
+    if MOMENTUM_INDICATORS["WR"]:
+        df["wr"] = williams_r(high=df["High"],
+                              low=df["Low"], close=df["Close"], fillna=True)
+
+    # Ultimate Oscillator
+    if MOMENTUM_INDICATORS["UO"]:
+        df["uo"] = ultimate_oscillator(high=df["High"],
+                                       low=df["Low"], close=df["Close"], fillna=True)
 
 
 def add_volatility_indicators(df):
 
-    # Add Bollinger Bands indicator
+    # Bollinger Bands (BB) indicator
     if VOLATILITY_INDICATORS["BOLB"]:
         indicator_bb = BollingerBands(
             close=df["Close"], window=20, window_dev=2)
@@ -64,41 +89,45 @@ def add_trend_indicators(df):
     # Exponential Moving Average (EMA)
     if TREND_INDICATORS["EMA"]:
         df["ema7"] = EMAIndicator(
-            df["Close"], window=7, fillna=True).ema_indicator()
+            close=df["Close"], window=7, fillna=True).ema_indicator()
         df["ema25"] = EMAIndicator(
-            df["Close"], window=25, fillna=True).ema_indicator()
+            close=df["Close"], window=25, fillna=True).ema_indicator()
         df["ema99"] = EMAIndicator(
-            df["Close"], window=99, fillna=True).ema_indicator()
+            close=df["Close"], window=99, fillna=True).ema_indicator()
         df["ema200"] = EMAIndicator(
-            df["Close"], window=200, fillna=True).ema_indicator()
+            close=df["Close"], window=200, fillna=True).ema_indicator()
 
     # Average Directional Movement Index (ADX)
     if TREND_INDICATORS["ADX"]:
-        df["adx"] = adx(df['High'], df["Low"], df["Close"])
-        df["adxn"] = adx_neg(df['High'], df["Low"], df["Close"])
-        df["adxp"] = adx_pos(df['High'], df["Low"], df["Close"])
+        df["adx"] = adx(high=df['High'], low=df["Low"], close=df["Close"])
+        df["adxn"] = adx_neg(high=df['High'], low=df["Low"], close=df["Close"])
+        df["adxp"] = adx_pos(high=df['High'], low=df["Low"], close=df["Close"])
 
     # Ichimoku Kinkō Hyō (Ichimoku)
     if TREND_INDICATORS["ICMK"]:
         df["icmka"] = IchimokuIndicator(
-            df["High"], df["Low"], fillna=True).ichimoku_a()
+            high=df["High"], low=df["Low"], fillna=True).ichimoku_a()
         df["icmkb"] = IchimokuIndicator(
-            df["High"], df["Low"], fillna=True).ichimoku_b()
+            high=df["High"], low=df["Low"], fillna=True).ichimoku_b()
         df["icmkbl"] = IchimokuIndicator(
-            df["High"], df["Low"], fillna=True).ichimoku_base_line()
+            high=df["High"], low=df["Low"], fillna=True).ichimoku_base_line()
         df["icmkcl"] = IchimokuIndicator(
-            df["High"], df["Low"], fillna=True).ichimoku_conversion_line()
+            high=df["High"], low=df["Low"], fillna=True).ichimoku_conversion_line()
 
-    # Add Parabolic Stop and Reverse (Parabolic SAR) indicator
+    # Parabolic Stop and Reverse (Parabolic SAR)
     if TREND_INDICATORS["PSAR"]:
-        indicator_psar = PSARIndicator(
-            high=df["High"], low=df["Low"], close=df["Close"], step=0.02, max_step=2, fillna=True)
-        df['psar'] = indicator_psar.psar()
+        df['psar'] = PSARIndicator(
+            high=df["High"], low=df["Low"], close=df["Close"], step=0.02, max_step=2, fillna=True).psar()
 
-    # Add Moving Average Convergence Divergence (MACD) indicator
+    # Moving Average Convergence Divergence (MACD)
     if TREND_INDICATORS["MACD"]:
-        df["MACD"] = macd(close=df["Close"], window_slow=26,
-                          window_fast=12, fillna=True)  # mazas
+        df["macd"] = macd(close=df["Close"], window_slow=26,
+                          window_fast=12, fillna=True)
+
+    if TREND_INDICATORS["CCI"]:
+        # Commodity Channel Index (CCI)
+        df["cci"] = cci(high=df["High"], low=df["Low"],
+                        close=df["Close"], fillna=True)
 
 
 def add_others_indicators(df):
@@ -108,7 +137,7 @@ def add_others_indicators(df):
 def AddIndicators(df):
 
     add_volume_indicators(df)
-    add_momentum_indicators(df)
+    add_momentum_indicators(df, 14)
     add_volatility_indicators(df)
     add_trend_indicators(df)
     add_others_indicators(df)
@@ -117,7 +146,7 @@ def AddIndicators(df):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('../../datasets/BTCUSDT-1H.csv')
+    df = pd.read_csv('datasets/BTCUSDT-1H.csv')
     # df = df.sort_values('Date')
     df = AddIndicators(df)
 

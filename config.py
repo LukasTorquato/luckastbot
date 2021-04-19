@@ -27,6 +27,11 @@ WORKING_TIMEFRAMES = [KLINE_INTERVAL_1DAY]
 
 # Technical Indicators
 TREND_INDICATORS = {"SMA": 0, "EMA": 0,
-                    "ADX": 1, "PSAR": 0, "MACD": 0, "ICMK": 0}
-MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0}
+                    "ADX": 0, "PSAR": 0,
+                    "MACD": 0, "ICMK": 0,
+                    "CCI": 1}
+MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0,
+                       "AO": 1, "SRSI": 1,
+                       "WR": 0, "UO": 1}
 VOLATILITY_INDICATORS = {"BOLB": 0}
+VOLUME_INDICATORS = {"OBV": 0}
