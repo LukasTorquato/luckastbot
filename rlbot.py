@@ -328,6 +328,7 @@ class CustomEnv:
 
             self.prev_episode_orders = self.episode_orders
 
+            # Vendeu e depois comprou
             if self.trades[-1]['type'] == "buy" and self.trades[-2]['type'] == "sell":
 
                 reward = self.trades[-2]['total']*self.trades[-2]['current_price'] - \
@@ -336,6 +337,7 @@ class CustomEnv:
                 self.trades[-1]["Reward"] = reward
                 return reward
 
+            # Comprou e depois vendeu
             elif self.trades[-1]['type'] == "sell" and self.trades[-2]['type'] == "buy":
 
                 reward = self.trades[-1]['total']*self.trades[-1]['current_price'] - \
@@ -509,7 +511,7 @@ if __name__ == "__main__":
     # single processing training
     agent = CustomAgent(lookback_window_size=lookback_window_size,
                         lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN")
-    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
+    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized, initial_balance=10000,
                           lookback_window_size=lookback_window_size)
     train_agent(train_env, agent, visualize=False,
                 train_episodes=50000, training_batch_size=500)
@@ -519,5 +521,4 @@ if __name__ == "__main__":
     # train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,
-                         test_episodes = 1000, folder = "2021_02_21_17_54_Crypto_trader", name = "3263.63_Crypto_trader", comment = "3 months")
+    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True, test_episodes = 1000, folder = "2021_02_21_17_54_Crypto_trader", name = "3263.63_Crypto_trader", comment = "3 months")
