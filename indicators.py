@@ -8,16 +8,12 @@
 #   Description : Used to plot 5 indicators with OHCL bars
 #
 # ================================================================
-import pandas as pd
 from config import *
 from ta.trend import *
 from ta.others import *
 from ta.volume import *
 from ta.momentum import *
 from ta.volatility import *
-
-
-from utils import Plot_OHCL
 
 
 def add_volume_indicators(df):

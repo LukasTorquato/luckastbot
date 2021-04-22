@@ -1,11 +1,9 @@
-from tradingview_ta import TA_Handler, Interval, Exchange
 from binance.client import Client
 from binance.enums import *
 from binance.exceptions import *
 import matplotlib
 import numpy as np
 import pandas as pd
-import talib
 
 # Binance
 WEB_SOCKET = "wss://stream.binance.com:9443/ws/"  # btcusdt@kline_5m
@@ -26,12 +24,12 @@ WORKING_STABLE = ['USDT']  # , 'BUSD', 'BRL']
 WORKING_TIMEFRAMES = [KLINE_INTERVAL_1DAY]
 
 # Technical Indicators
-TREND_INDICATORS = {"SMA": 0, "EMA": 0,
+TREND_INDICATORS = {"SMA": 1, "EMA": 1,
                     "ADX": 0, "PSAR": 0,
-                    "MACD": 0, "ICMK": 0,
-                    "CCI": 1}
-MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0,
-                       "AO": 1, "SRSI": 1,
+                    "MACD": 1, "ICMK": 0,
+                    "CCI": 0}
+MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 1,
+                       "AO": 1, "SRSI": 0,
                        "WR": 0, "UO": 1}
 VOLATILITY_INDICATORS = {"BOLB": 0}
 VOLUME_INDICATORS = {"OBV": 0}
