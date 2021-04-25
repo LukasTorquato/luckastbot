@@ -24,12 +24,12 @@ WORKING_STABLE = ['USDT']  # , 'BUSD', 'BRL']
 WORKING_TIMEFRAMES = [KLINE_INTERVAL_1DAY]
 
 # Technical Indicators
-TREND_INDICATORS = {"SMA": 1, "EMA": 1,
-                    "ADX": 0, "PSAR": 0,
+TREND_INDICATORS = {"SMA": 1, "EMA": 0,
+                    "ADX": 0, "PSAR": 1,
                     "MACD": 1, "ICMK": 0,
                     "CCI": 0}
-MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 1,
-                       "AO": 1, "SRSI": 0,
-                       "WR": 0, "UO": 1}
-VOLATILITY_INDICATORS = {"BOLB": 0}
+MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0,
+                       "AO": 0, "SRSI": 0,
+                       "WR": 0, "UO": 0}
+VOLATILITY_INDICATORS = {"BOLB": 1}
 VOLUME_INDICATORS = {"OBV": 0}

@@ -38,7 +38,7 @@ class CustomAgent:
         self.action_space = np.array([0, 1, 2])
 
         # folder to save models
-        self.log_name = datetime.now().strftime("%Y_%m_%d_%H_%M")+"_Crypto_trader"
+        self.log_name = 'runs/'+datetime.now().strftime("%Y_%m_%d_%H_%M")+"_Crypto_trader"
 
         # State size contains Market+Orders+Indicators history for the last lookback_window_size steps
         # 5 standard OHCL information + market and indicators
@@ -54,13 +54,13 @@ class CustomAgent:
         self.Actor = self.Critic = Shared_Model(
             input_shape=self.state_size, action_space=self.action_space.shape[0], lr=self.lr, optimizer=self.optimizer, model=self.model)
         # Create Actor-Critic network model
-        # self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
-        # self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        #self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        #self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
 
     # create tensorboard writer
     def create_writer(self, initial_balance, normalize_value, train_episodes):
         self.replay_count = 0
-        self.writer = SummaryWriter('runs/'+self.log_name)
+        self.writer = SummaryWriter(self.log_name)
 
         # Create folder to save models
         if not os.path.exists(self.log_name):
@@ -270,9 +270,10 @@ class CustomEnv:
         self.current_step += 1
 
         # Set the current price to a random price between open and close
-        current_price = random.uniform(
-            self.df.loc[self.current_step, 'Low'], self.df.loc[self.current_step, 'High'])
-        # current_price = self.df.loc[self.current_step, 'Open']
+        # current_price = random.uniform(
+        #    self.df.loc[self.current_step, 'Open'],
+        #    self.df.loc[self.current_step, 'Close'])
+        current_price = self.df.loc[self.current_step, 'Open']
         Date = self.df.loc[self.current_step, 'Date']  # for visualization
         High = self.df.loc[self.current_step, 'High']  # for visualization
         Low = self.df.loc[self.current_step, 'Low']  # for visualization
@@ -325,24 +326,15 @@ class CustomEnv:
     # Calculate reward
     def get_reward(self):
         if self.episode_orders > 1 and self.episode_orders > self.prev_episode_orders:
-
             self.prev_episode_orders = self.episode_orders
-
-            # Vendeu e depois comprou
             if self.trades[-1]['type'] == "buy" and self.trades[-2]['type'] == "sell":
-
                 reward = self.trades[-2]['total']*self.trades[-2]['current_price'] - \
                     self.trades[-2]['total']*self.trades[-1]['current_price']
-
                 self.trades[-1]["Reward"] = reward
                 return reward
-
-            # Comprou e depois vendeu
             elif self.trades[-1]['type'] == "sell" and self.trades[-2]['type'] == "buy":
-
                 reward = self.trades[-1]['total']*self.trades[-1]['current_price'] - \
                     self.trades[-2]['total']*self.trades[-2]['current_price']
-
                 self.trades[-1]["Reward"] = reward
                 return reward
         else:
@@ -350,7 +342,7 @@ class CustomEnv:
 
     # render environment
     def render(self, visualize=False):
-        # print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
+        #print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
         if visualize:
             # Render the environment to the screen
             img = self.visualization.render(
@@ -484,19 +476,19 @@ def test_agent(test_df, test_df_nomalized, visualize=True, test_episodes=10, fol
 
 if __name__ == "__main__":
     df = pd.read_csv('datasets/BTCUSDT-1H.csv')
-    df = df.dropna()
-    df = df.sort_values('Date')
+    # df = df.dropna()
+    # df = df.sort_values('Date')
 
     # insert indicators to df 2021_02_21_17_54_Crypto_trader
     df = AddIndicators(df)
     # df = indicators_dataframe(df, threshold=0.5, plot=False) # insert indicators to df 2021_02_18_21_48_Crypto_trader
     depth = len(list(df.columns[1:]))  # OHCL + indicators without Date
 
-    df_nomalized = Normalizing(df[99:])[1:].dropna()
+    df_nomalized = Normalizing(df[100:])  # [1:].dropna()
     df = df[100:].dropna()
 
     lookback_window_size = 100
-    test_window = 720*6  # 3 months
+    test_window = 720*3  # 3 months
 
     # split training and testing datasets
     # we leave 100 to have properly calculated indicators
@@ -511,14 +503,14 @@ if __name__ == "__main__":
     # single processing training
     agent = CustomAgent(lookback_window_size=lookback_window_size,
                         lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN")
-    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized, initial_balance=10000,
+    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
                           lookback_window_size=lookback_window_size)
     train_agent(train_env, agent, visualize=False,
-                train_episodes=50000, training_batch_size=500)
+                train_episodes=100, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    # agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
-    # train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
+    #agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+    #train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
 
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True, test_episodes = 1000, folder = "2021_02_21_17_54_Crypto_trader", name = "3263.63_Crypto_trader", comment = "3 months")
+    #test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
+    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

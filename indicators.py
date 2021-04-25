@@ -79,8 +79,7 @@ def add_trend_indicators(df):
             close=df["Close"], window=25, fillna=True).sma_indicator()
         df["sma99"] = SMAIndicator(
             close=df["Close"], window=99, fillna=True).sma_indicator()
-        df["sma200"] = SMAIndicator(
-            close=df["Close"], window=200, fillna=True).sma_indicator()
+        # df["sma200"] = SMAIndicator(close=df["Close"], window=200, fillna=True).sma_indicator()
 
     # Exponential Moving Average (EMA)
     if TREND_INDICATORS["EMA"]:

@@ -2,7 +2,7 @@
 #
 #   File name   : utils.py
 #   Author      : PyLessons
-#   Created date: 2021-01-20
+#   Created date: 2021-02-25
 #   Website     : https://pylessons.com/
 #   GitHub      : https://github.com/pythonlessons/RL-Bitcoin-trading-bot
 #   Description : additional functions
@@ -28,6 +28,36 @@ def Write_to_file(Date, net_worth, filename='{}.txt'.format(datetime.now().strft
     file = open("logs/"+filename, 'a+')
     file.write(Date+"\n")
     file.close()
+
+
+def display_frames_as_gif(frames, episode):
+    import pylab
+    from matplotlib import animation
+    try:
+        pylab.figure(figsize=(frames[0].shape[1] /
+                              72.0, frames[0].shape[0] / 72.0), dpi=72)
+        patch = pylab.imshow(frames[0])
+        pylab.axis('off')
+        pylab.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
+        def animate(i):
+            patch.set_data(frames[i])
+        anim = animation.FuncAnimation(
+            pylab.gcf(), animate, frames=len(frames), interval=33)
+        anim.save(str(episode)+'_gameplay.gif')
+    except:
+        pylab.figure(figsize=(frames[0].shape[1] /
+                              72.0, frames[0].shape[0] / 72.0), dpi=72)
+        patch = pylab.imshow(frames[0])
+        pylab.axis('off')
+        pylab.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
+        def animate(i):
+            patch.set_data(frames[i])
+        anim = animation.FuncAnimation(
+            pylab.gcf(), animate, frames=len(frames), interval=33)
+        anim.save(str(episode)+'_gameplay.gif',
+                  writer=animation.PillowWriter(fps=10))
 
 
 class TradingGraph:
@@ -271,4 +301,43 @@ def Plot_OHCL(df):
     fig.autofmt_xdate()
     fig.tight_layout()
 
+    plt.show()
+
+
+def Normalizing(df_original):
+    df = df_original.copy()
+    column_names = df.columns.tolist()
+    for column in column_names[1:]:
+        # Logging and Differencing
+        # test = np.log(df[column]) - np.log(df[column].shift(1))
+        # if test[1:].isnull().any():
+        #     df[column] = df[column] - df[column].shift(1)
+        # else:
+        #     df[column] = np.log(df[column]) - np.log(df[column].shift(1))
+        # Min Max Scaler implemented
+        Min = df[column].min()
+        Max = df[column].max()
+        df[column] = df[column] / (Max - Min)
+
+    return df
+
+
+if __name__ == "__main__":
+    # testing normalization technieques
+    df = pd.read_csv('./BTCUSD_1h.csv')
+    df = df.dropna()
+    df = df.sort_values('Date')
+
+    #df["Close"] = df["Close"] - df["Close"].shift(1)
+    df["Close"] = np.log(df["Close"]) - np.log(df["Close"].shift(1))
+
+    Min = df["Close"].min()
+    Max = df["Close"].max()
+    df["Close"] = (df["Close"] - Min) / (Max - Min)
+
+    fig = plt.figure(figsize=(16, 8))
+    plt.plot(df["Close"], '-')
+    ax = plt.gca()
+    ax.grid(True)
+    fig.tight_layout()
     plt.show()
