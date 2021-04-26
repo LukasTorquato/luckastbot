@@ -2,6 +2,12 @@
 
 TCC Trading Bot
 
+### CUDA Libs - Installation
+
+- CUDA 11.0.x = https://developer.nvidia.com/cuda-toolkit-archive
+- cuDNN 8.0.x For CUDA 11.0 = https://developer.nvidia.com/rdp/cudnn-archive
+- TensorRT 7.2.2 = https://developer.nvidia.com/nvidia-tensorrt-7x-download
+
 ### Python Libs - Installation
 
 - pip install numpy
@@ -9,8 +15,8 @@ TCC Trading Bot
 - pip install pandas
 - pip install opencv-python
 - pip install seaborn
-- tensorflow==2.3.1
-- tensorflow-gpu==2.3.1
+- tensorflow==2.4.0
+- tensorflow-gpu==2.4.0
 - tensorboardx
 - pip install python-binance
 - pip install websocket

@@ -1,0 +1,16 @@
+{
+    "training start": "2021-04-25 21:45",
+    "initial balance": 10000,
+    "training episodes": 100,
+    "lookback window size": 100,
+    "depth": 0,
+    "lr": 1e-05,
+    "epochs": 5,
+    "batch size": 32,
+    "normalize value": 40000,
+    "model": "CNN",
+    "comment": "",
+    "saving time": "",
+    "Actor name": "",
+    "Critic name": ""
+}

@@ -41,8 +41,8 @@ class CustomAgent:
         self.log_name = 'runs/'+datetime.now().strftime("%Y_%m_%d_%H_%M")+"_Crypto_trader"
 
         # State size contains Market+Orders+Indicators history for the last lookback_window_size steps
-        # 5 standard OHCL information + market and indicators
-        self.state_size = (lookback_window_size, 5+depth)
+        # 5 market information + standard OHCL, Volume, Number of Trades and indicators
+        self.state_size = (lookback_window_size, depth+5)
 
         # Neural Networks part bellow
         self.lr = lr
@@ -183,7 +183,7 @@ class CustomAgent:
 
 class CustomEnv:
     # A custom Bitcoin trading environment
-    def __init__(self, df, df_normalized, initial_balance=1000, lookback_window_size=50, Render_range=100, Show_reward=False, Show_indicators=False, normalize_value=40000):
+    def __init__(self, df, df_normalized, initial_balance=INITIAL_CAPITAL, lookback_window_size=50, Render_range=100, Show_reward=False, Show_indicators=False, normalize_value=64000):
         # Define action space and state size and other custom parameters
         self.df = df.reset_index()  # .reset_index()#.dropna().copy().reset_index()
         # .reset_index()#.copy().dropna().reset_index()
@@ -484,9 +484,8 @@ if __name__ == "__main__":
     # df = indicators_dataframe(df, threshold=0.5, plot=False) # insert indicators to df 2021_02_18_21_48_Crypto_trader
     depth = len(list(df.columns[1:]))  # OHCL + indicators without Date
 
-    df_nomalized = Normalizing(df[100:])  # [1:].dropna()
+    df_nomalized = Normalizing(df[99:])[1:].dropna()
     df = df[100:].dropna()
-
     lookback_window_size = 100
     test_window = 720*3  # 3 months
 
@@ -501,16 +500,19 @@ if __name__ == "__main__":
     test_df_nomalized = df_nomalized[-test_window-lookback_window_size:]
 
     # single processing training
-    agent = CustomAgent(lookback_window_size=lookback_window_size,
-                        lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN")
-    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
-                          lookback_window_size=lookback_window_size)
-    train_agent(train_env, agent, visualize=False,
-                train_episodes=100, training_batch_size=500)
+    # agent = CustomAgent(lookback_window_size=lookback_window_size,
+    #                     lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN")
+    # train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized, initial_balance=10000,
+    #                       lookback_window_size=lookback_window_size)
+    # train_agent(train_env, agent, visualize=False,
+    #             train_episodes=100, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    #agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
-    #train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker = 32, training_batch_size=500, visualize=False, EPISODES=200000)
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5,
+                        optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+
+    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+                          num_worker=1, training_batch_size=500, visualize=False, EPISODES=1000)
 
     #test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

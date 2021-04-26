@@ -23,6 +23,9 @@ WORKING_ASSETS = ['BTC']  # , 'ADA', 'ETH', 'BNB']
 WORKING_STABLE = ['USDT']  # , 'BUSD', 'BRL']
 WORKING_TIMEFRAMES = [KLINE_INTERVAL_1DAY]
 
+# User Settings
+INITIAL_CAPITAL = 10000
+
 # Technical Indicators
 TREND_INDICATORS = {"SMA": 1, "EMA": 0,
                     "ADX": 0, "PSAR": 1,

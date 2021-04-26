@@ -12,7 +12,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D  # , LSTM
-from tensorflow.compat.v1.keras.layers import CuDNNLSTM as LSTM  # only for GPU
+from tensorflow.compat.v1.keras.layers import CuDNNLSTM  # only for GPU
 from tensorflow.keras import backend as K
 # tf.config.experimental_run_functions_eagerly(True) # used for debuging and development
 # usually using this for fastest performance
