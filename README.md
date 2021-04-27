@@ -10,23 +10,23 @@ TCC Trading Bot
 
 ### Python Libs - Installation
 
-- pip install numpy
+- pip install numpy==1.19.2
 - pip install matplotlib
 - pip install pandas
 - pip install opencv-python
 - pip install seaborn
-- tensorflow==2.4.0
-- tensorflow-gpu==2.4.0
-- tensorboardx
+- pip install tensorflow==2.4.0
+- pip install tensorflow-gpu==2.4.0
+- pip install tensorboardx
 - pip install python-binance
 - pip install websocket
+- pip install mplfinance
 - pip install ta
 
 Not in use (yet):
 
 - pip install tradingview-ta (not in use)
 - pip install backtrader
-- pip install mplfinance
 
 - TA-Lib (old):
   - Download VS Build Tools = https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16/ta-lib
