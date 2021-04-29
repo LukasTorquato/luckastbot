@@ -30,6 +30,7 @@ def Write_to_file(Date, net_worth, filename='{}.txt'.format(datetime.now().strft
     file.close()
 
 
+""" 
 def display_frames_as_gif(frames, episode):
     import pylab
     from matplotlib import animation
@@ -222,13 +223,13 @@ class TradingGraph:
         # I use tight_layout to replace plt.subplots_adjust
         self.fig.tight_layout()
 
-        """Display image with matplotlib - interrupting other tasks"""
+        # Display image with matplotlib - interrupting other tasks
         # Show the graph without blocking the rest of the program
         # plt.show(block=False)
         # Necessary to view frames before they are unrendered
         # plt.pause(0.001)
 
-        """Display image with OpenCV - no interruption"""
+        # Display image with OpenCV - no interruption
 
         # redraw the canvas
         self.fig.canvas.draw()
@@ -249,7 +250,8 @@ class TradingGraph:
         else:
             return img
 
-
+"""
+"""  
 def Plot_OHCL(df):
     df_original = df.copy()
     # necessary convert to datetime
@@ -302,6 +304,8 @@ def Plot_OHCL(df):
     fig.tight_layout()
 
     plt.show()
+
+"""
 
 
 def Normalizing(df_original):

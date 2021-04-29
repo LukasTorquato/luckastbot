@@ -12,7 +12,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D  # , LSTM
-# from tensorflow.compat.v1.keras.layers import CuDNNLSTM  # only for GPU
+# from tensorflow.compat.v1.keras.layers import CuDNNLSTM as LTSM  # only for GPU
 from tensorflow.keras import backend as K
 # tf.config.experimental_run_functions_eagerly(True) # used for debuging and development
 # usually using this for fastest performance
@@ -21,10 +21,10 @@ tf.compat.v1.disable_eager_execution()
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if len(gpus) > 0:
     print(f'GPUs {gpus}')
-    try:
-        tf.config.experimental.set_memory_growth(gpus[0], True)
-    except RuntimeError:
-        pass
+    # try:
+    #     tf.config.experimental.set_memory_growth(gpus[0], True)
+    # except RuntimeError:
+    #     pass
 
 
 class Shared_Model:

@@ -9,26 +9,27 @@
 #
 # ================================================================
 import json
+import random
+import copy
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from multiprocessing_env import train_multiprocessing, test_multiprocessing
 from indicators import *
 from datetime import datetime
-import matplotlib.pyplot as plt
-from utils import TradingGraph, Write_to_file, Normalizing
+from utils import Write_to_file, Normalizing
 from model import Actor_Model, Critic_Model, Shared_Model
 from tensorflow.keras.optimizers import Adam, RMSprop
 from tensorboardX import SummaryWriter
 from collections import deque
-import random
-import numpy as np
-import pandas as pd
-import copy
-import os
+
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 class CustomAgent:
     # A custom Bitcoin trading agent
-    def __init__(self, lookback_window_size=50, lr=0.00005, epochs=1, optimizer=Adam, batch_size=32, model="", depth=0, comment=""):
+    def __init__(self, lookback_window_size=50, lr=0.00005, epochs=1, optimizer=Adam, batch_size=32, model="", depth=5, comment=""):
         self.lookback_window_size = lookback_window_size
         self.model = model
         self.comment = comment
@@ -54,8 +55,8 @@ class CustomAgent:
         self.Actor = self.Critic = Shared_Model(
             input_shape=self.state_size, action_space=self.action_space.shape[0], lr=self.lr, optimizer=self.optimizer, model=self.model)
         # Create Actor-Critic network model
-        #self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
-        #self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        # self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
+        # self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
 
     # create tensorboard writer
     def create_writer(self, initial_balance, normalize_value, train_episodes):
@@ -210,8 +211,8 @@ class CustomEnv:
 
     # Reset the state of the environment to an initial state
     def reset(self, env_steps_size=0):
-        self.visualization = TradingGraph(Render_range=self.Render_range, Show_reward=self.Show_reward,
-                                          Show_indicators=self.Show_indicators)  # init visualization
+        # self.visualization = TradingGraph(Render_range=self.Render_range, Show_reward=self.Show_reward,
+        #   Show_indicators=self.Show_indicators)  # init visualization
         # limited orders memory for visualization
         self.trades = deque(maxlen=self.Render_range)
 
@@ -342,12 +343,13 @@ class CustomEnv:
 
     # render environment
     def render(self, visualize=False):
-        #print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
-        if visualize:
-            # Render the environment to the screen
-            img = self.visualization.render(
-                self.df.loc[self.current_step], self.net_worth, self.trades)
-            return img
+        pass
+        # print(f'Step: {self.current_step}, Net Worth: {self.net_worth}')
+        # if visualize:
+        # Render the environment to the screen
+        # img = self.visualization.render(
+        #     self.df.loc[self.current_step], self.net_worth, self.trades)
+        # return img
 
 
 def train_agent(env, agent, visualize=False, train_episodes=50, training_batch_size=500):
@@ -360,7 +362,7 @@ def train_agent(env, agent, visualize=False, train_episodes=50, training_batch_s
 
         states, actions, rewards, predictions, dones, next_states = [], [], [], [], [], []
         for t in range(training_batch_size):
-            env.render(visualize)
+            # env.render(visualize)
             action, prediction = agent.act(state)
             next_state, reward, done = env.step(action)
             states.append(np.expand_dims(state, axis=0))
@@ -384,13 +386,13 @@ def train_agent(env, agent, visualize=False, train_episodes=50, training_batch_s
 
         print("episode: {:<5} net worth {:<7.2f} average: {:<7.2f} orders: {}".format(
             episode, env.net_worth, average, env.episode_orders))
-        if episode > len(total_average):
-            if best_average < average:
-                best_average = average
-                print("Saving model")
-                agent.save(score="{:.2f}".format(best_average), args=[
-                           episode, average, env.episode_orders, a_loss, c_loss])
-            agent.save()
+        # if episode > len(total_average):
+        if best_average < average:
+            best_average = average
+            print("Saving model")
+            agent.save(score="{:.2f}".format(best_average), args=[
+                episode, average, env.episode_orders, a_loss, c_loss])
+        agent.save()
 
 
 def _test_agent(env, agent, visualize=True, test_episodes=10, folder="", name="Crypto_trader", comment=""):
@@ -488,7 +490,6 @@ if __name__ == "__main__":
     df = df[100:].dropna()
     lookback_window_size = 100
     test_window = 720*3  # 3 months
-
     # split training and testing datasets
     # we leave 100 to have properly calculated indicators
     train_df = df[:-test_window-lookback_window_size]
@@ -498,21 +499,20 @@ if __name__ == "__main__":
     # we leave 100 to have properly calculated indicators
     train_df_nomalized = df_nomalized[:-test_window-lookback_window_size]
     test_df_nomalized = df_nomalized[-test_window-lookback_window_size:]
-
+    # print(train_df)
     # single processing training
-    # agent = CustomAgent(lookback_window_size=lookback_window_size,
-    #                     lr=0.00001, epochs=5, optimizer=Adam, batch_size=32, model="CNN")
-    # train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized, initial_balance=10000,
-    #                       lookback_window_size=lookback_window_size)
-    # train_agent(train_env, agent, visualize=False,
-    #             train_episodes=100, training_batch_size=500)
+    agent = CustomAgent(lookback_window_size=lookback_window_size, depth=depth, lr=0.00001,
+                        epochs=5, optimizer=Adam, batch_size=32, model="CNN", comment="Normalized")
+    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
+                          initial_balance=10000, lookback_window_size=lookback_window_size)
+    train_agent(train_env, agent, visualize=False,
+                train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5,
-                        optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+    # agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00002, epochs=5,
+    #                     optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+    # train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+    #                       num_worker=10, training_batch_size=500, visualize=False, EPISODES=10000)
 
-    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=1, training_batch_size=500, visualize=False, EPISODES=1000)
-
-    #test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
+    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

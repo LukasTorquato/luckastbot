@@ -8,12 +8,12 @@
 #   Description : functions to train/test multiple custom BTC trading environments
 #
 # ================================================================
-from collections import deque
-from multiprocessing import Process, Pipe
 import numpy as np
-from datetime import datetime
 import json
 from tensorflow.keras.optimizers import Adam
+from multiprocessing import Process, Pipe
+from datetime import datetime
+from collections import deque
 
 
 class Environment(Process):
@@ -53,6 +53,7 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
     best_average = 0  # used to track best average net worth
 
     for idx in range(num_worker):
+        print("###### Starting Worker #"+str(idx))
         parent_conn, child_conn = Pipe()
         env = CustomEnv(train_df, train_df_nomalized,
                         lookback_window_size=agent.lookback_window_size)
