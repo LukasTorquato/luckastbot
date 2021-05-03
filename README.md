@@ -4,9 +4,16 @@ TCC Trading Bot
 
 ### CUDA Libs - Installation
 
+#### Tensorflow GPU install:
+
+- Main link = https://www.tensorflow.org/install/gpu?hl=pt-br
+- pip install tensorflow==2.4.0
+- pip install tensorflow-gpu==2.4.0
+
 - CUDA 11.0.x = https://developer.nvidia.com/cuda-toolkit-archive
 - cuDNN 8.0.x For CUDA 11.0 = https://developer.nvidia.com/rdp/cudnn-archive
-- TensorRT 7.2.2 = https://developer.nvidia.com/nvidia-tensorrt-7x-download
+- TensorRT 7.2.2 (Only Linux) = https://developer.nvidia.com/nvidia-tensorrt-7x-download
+- pip install tensorboardx
 
 ### Python Libs - Installation
 
@@ -15,9 +22,6 @@ TCC Trading Bot
 - pip install pandas
 - pip install opencv-python
 - pip install seaborn
-- pip install tensorflow==2.4.0
-- pip install tensorflow-gpu==2.4.0
-- pip install tensorboardx
 - pip install python-binance
 - pip install websocket
 - pip install mplfinance
