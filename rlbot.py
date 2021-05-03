@@ -501,18 +501,18 @@ if __name__ == "__main__":
     test_df_nomalized = df_nomalized[-test_window-lookback_window_size:]
     # print(train_df)
     # single processing training
-    agent = CustomAgent(lookback_window_size=lookback_window_size, depth=depth, lr=0.00001,
-                        epochs=5, optimizer=Adam, batch_size=32, model="CNN", comment="Normalized")
-    train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
-                          initial_balance=10000, lookback_window_size=lookback_window_size)
-    train_agent(train_env, agent, visualize=False,
-                train_episodes=1000, training_batch_size=500)
+    # agent = CustomAgent(lookback_window_size=lookback_window_size, depth=depth, lr=0.00001,
+    #                     epochs=5, optimizer=Adam, batch_size=32, model="CNN", comment="Normalized")
+    # train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
+    #                       initial_balance=10000, lookback_window_size=lookback_window_size)
+    # train_agent(train_env, agent, visualize=False,
+    #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    # agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00002, epochs=5,
-    #                     optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
-    # train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-    #                       num_worker=10, training_batch_size=500, visualize=False, EPISODES=10000)
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00002, epochs=5,
+                        optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+                          num_worker=16, training_batch_size=500, visualize=False, EPISODES=10000)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")
