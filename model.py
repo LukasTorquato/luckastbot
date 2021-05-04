@@ -53,9 +53,9 @@ class Shared_Model:
             X = Dense(512, activation="relu")(X)
 
         # Critic model
-        V = Dense(512, activation="relu")(X)
-        V = Dense(256, activation="relu")(V)
-        V = Dense(64, activation="relu")(V)
+        V = Dense(50, activation="relu")(X)
+        V = Dense(50, activation="relu")(V)
+        V = Dense(50, activation="relu")(V)
         value = Dense(1, activation=None)(V)
 
         self.Critic = Model(inputs=X_input, outputs=value)
@@ -63,9 +63,9 @@ class Shared_Model:
                             optimizer=optimizer(lr=lr))
 
         # Actor model
-        A = Dense(512, activation="relu")(X)
-        A = Dense(256, activation="relu")(A)
-        A = Dense(64, activation="relu")(A)
+        A = Dense(50, activation="relu")(X)
+        A = Dense(50, activation="relu")(A)
+        A = Dense(50, activation="relu")(A)
         output = Dense(self.action_space, activation="softmax")(A)
 
         self.Actor = Model(inputs=X_input, outputs=output)

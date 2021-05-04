@@ -489,7 +489,7 @@ if __name__ == "__main__":
     df_nomalized = Normalizing(df[99:])[1:].dropna()
     df = df[100:].dropna()
     lookback_window_size = 100
-    test_window = 720*3  # 3 months
+    test_window = 720*6  # 3 months
     # split training and testing datasets
     # we leave 100 to have properly calculated indicators
     train_df = df[:-test_window-lookback_window_size]
@@ -509,7 +509,7 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00002, epochs=5,
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.01, epochs=5,
                         optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
                           num_worker=16, training_batch_size=500, visualize=False, EPISODES=10000)
