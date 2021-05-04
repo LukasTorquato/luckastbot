@@ -29,11 +29,12 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 class CustomAgent:
     # A custom Bitcoin trading agent
-    def __init__(self, lookback_window_size=50, lr=0.00005, epochs=1, optimizer=Adam, batch_size=32, model="", depth=5, comment=""):
+    def __init__(self, lookback_window_size=50, lr=0.00005, epochs=1, optimizer=Adam, layers=[512, 256, 64], batch_size=32, model="", depth=5, comment=""):
         self.lookback_window_size = lookback_window_size
         self.model = model
         self.comment = comment
         self.depth = depth
+        self.layers = layers
 
         # Action space from 0 to 3, 0 is hold, 1 is buy, 2 is sell
         self.action_space = np.array([0, 1, 2])
@@ -53,7 +54,7 @@ class CustomAgent:
 
         # Create shared Actor-Critic network model
         self.Actor = self.Critic = Shared_Model(
-            input_shape=self.state_size, action_space=self.action_space.shape[0], lr=self.lr, optimizer=self.optimizer, model=self.model)
+            input_shape=self.state_size, action_space=self.action_space.shape[0], lr=self.lr, optimizer=self.optimizer, model=self.model, layers=layers)
         # Create Actor-Critic network model
         # self.Actor = Actor_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
         # self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
@@ -88,6 +89,8 @@ class CustomAgent:
             "saving time": "",
             "Actor name": "",
             "Critic name": "",
+            "Actor Nodes": self.layers,
+            "Critic Nodes": self.layers
         }
         with open(self.log_name+"/Parameters.json", "w") as write_file:
             json.dump(params, write_file, indent=4)
@@ -509,10 +512,10 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.01, epochs=5,
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.01, epochs=5, layers=[50, 50, 50],
                         optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=16, training_batch_size=500, visualize=False, EPISODES=10000)
+                          num_worker=1, training_batch_size=500, visualize=False, EPISODES=10000)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

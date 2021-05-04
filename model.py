@@ -28,7 +28,7 @@ if len(gpus) > 0:
 
 
 class Shared_Model:
-    def __init__(self, input_shape, action_space, lr, optimizer, model="Dense"):
+    def __init__(self, input_shape, action_space, lr, optimizer, model="Dense", layers=[512, 256, 64]):
         X_input = Input(input_shape)
         self.action_space = action_space
 
@@ -53,9 +53,9 @@ class Shared_Model:
             X = Dense(512, activation="relu")(X)
 
         # Critic model
-        V = Dense(50, activation="relu")(X)
-        V = Dense(50, activation="relu")(V)
-        V = Dense(50, activation="relu")(V)
+        V = Dense(layers[0], activation="relu")(X)
+        V = Dense(layers[1], activation="relu")(V)
+        V = Dense(layers[2], activation="relu")(V)
         value = Dense(1, activation=None)(V)
 
         self.Critic = Model(inputs=X_input, outputs=value)
@@ -63,9 +63,9 @@ class Shared_Model:
                             optimizer=optimizer(lr=lr))
 
         # Actor model
-        A = Dense(50, activation="relu")(X)
-        A = Dense(50, activation="relu")(A)
-        A = Dense(50, activation="relu")(A)
+        A = Dense(layers[0], activation="relu")(X)
+        A = Dense(layers[1], activation="relu")(A)
+        A = Dense(layers[2], activation="relu")(A)
         output = Dense(self.action_space, activation="softmax")(A)
 
         self.Actor = Model(inputs=X_input, outputs=output)
