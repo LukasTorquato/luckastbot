@@ -60,7 +60,7 @@ class CustomAgent:
         # self.Critic = Critic_Model(input_shape=self.state_size, action_space = self.action_space.shape[0], lr=self.lr, optimizer = self.optimizer)
 
     # create tensorboard writer
-    def create_writer(self, initial_balance, normalize_value, train_episodes):
+    def create_writer(self, initial_balance, normalize_value, train_episodes, training_batch_size, indicators=""):
         self.replay_count = 0
         self.writer = SummaryWriter(self.log_name)
 
@@ -69,15 +69,17 @@ class CustomAgent:
             os.makedirs(self.log_name)
 
         self.start_training_log(
-            initial_balance, normalize_value, train_episodes)
+            initial_balance, normalize_value, train_episodes, training_batch_size, indicators)
 
-    def start_training_log(self, initial_balance, normalize_value, train_episodes):
+    def start_training_log(self, initial_balance, normalize_value, train_episodes, training_batch_size, indicators):
         # save training parameters to Parameters.json file for future
         current_date = datetime.now().strftime('%Y-%m-%d %H:%M')
         params = {
             "training start": current_date,
+            "duration": "",
             "initial balance": initial_balance,
             "training episodes": train_episodes,
+            "training batch size": training_batch_size,
             "lookback window size": self.lookback_window_size,
             "depth": self.depth,
             "lr": self.lr,
@@ -90,7 +92,8 @@ class CustomAgent:
             "Actor name": "",
             "Critic name": "",
             "Actor Nodes": self.layers,
-            "Critic Nodes": self.layers
+            "Critic Nodes": self.layers,
+            "Indicators": indicators
         }
         with open(self.log_name+"/Parameters.json", "w") as write_file:
             json.dump(params, write_file, indent=4)
@@ -485,7 +488,7 @@ if __name__ == "__main__":
     # df = df.sort_values('Date')
 
     # insert indicators to df 2021_02_21_17_54_Crypto_trader
-    df = AddIndicators(df)
+    df, indicators = AddIndicators(df)
     # df = indicators_dataframe(df, threshold=0.5, plot=False) # insert indicators to df 2021_02_18_21_48_Crypto_trader
     depth = len(list(df.columns[1:]))  # OHCL + indicators without Date
 
@@ -512,10 +515,10 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.01, epochs=5, layers=[50, 50, 50],
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[50, 50, 50],
                         optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=1, training_batch_size=500, visualize=False, EPISODES=10000)
+                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=50000)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

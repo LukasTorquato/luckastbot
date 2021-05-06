@@ -10,6 +10,7 @@
 # ================================================================
 import numpy as np
 import json
+import time
 from tensorflow.keras.optimizers import Adam
 from multiprocessing import Process, Pipe
 from datetime import datetime
@@ -65,7 +66,8 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
         child_conns.append(child_conn)
 
     # create TensorBoard writer
-    agent.create_writer(env.initial_balance, env.normalize_value, EPISODES)
+    agent.create_writer(env.initial_balance,
+                        env.normalize_value, EPISODES, training_batch_size)
 
     states = [[] for _ in range(num_worker)]
     next_states = [[] for _ in range(num_worker)]
@@ -78,6 +80,7 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
     for worker_id, parent_conn in enumerate(parent_conns):
         state[worker_id] = parent_conn.recv()
 
+    starting_time = time.time()
     while episode < EPISODES:
         predictions_list = agent.Actor.actor_predict(
             np.reshape(state, [num_worker]+[_ for _ in state[0].shape]))
@@ -111,7 +114,8 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
                 agent.writer.add_scalar(
                     'Data/episode_orders', episode_orders, episode)
 
-                print("episode: {:<5} worker: {:<2} net worth: {:<7.2f} average: {:<7.2f} orders: {}".format(
+                ts = time.gmtime()
+                print(time.strftime("%x %X", ts) + " - Episode: {:<5} Worker: {:<2} Net Worth: {:<7.2f} Average: {:<7.2f} N_Orders: {}".format(
                     episode, worker_id, net_worth, average, episode_orders))
                 if episode > len(total_average):
                     if best_average < average:
@@ -129,6 +133,12 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
                 predictions[worker_id] = []
 
     # terminating processes after while loop
+    with open(agent.log_name+"/Parameters.json", "r") as json_file:
+        params = json.load(json_file)
+    with open(agent.log_name+"/Parameters.json", "w") as write_file:
+        params["duration"] = (time.time() - starting_time)/60
+        json.dump(params, write_file, indent=4)
+
     works.append(work)
     for work in works:
         work.terminate()
@@ -156,7 +166,7 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
 
     for idx in range(num_worker):
         parent_conn, child_conn = Pipe()
-        #env = CustomEnv(test_df, initial_balance=initial_balance, lookback_window_size=agent.lookback_window_size)
+        # env = CustomEnv(test_df, initial_balance=initial_balance, lookback_window_size=agent.lookback_window_size)
         env = CustomEnv(df=test_df, df_normalized=test_df_nomalized,
                         initial_balance=initial_balance, lookback_window_size=agent.lookback_window_size)
         work = Environment(idx, child_conn, env,
@@ -185,7 +195,7 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
 
             if reset:
                 episode += 1
-                #print(episode, net_worth, episode_orders)
+                # print(episode, net_worth, episode_orders)
                 average_net_worth += net_worth
                 average_orders += episode_orders
                 if net_worth < initial_balance:

@@ -131,21 +131,26 @@ def add_others_indicators(df):
 
 def AddIndicators(df):
 
+    inds = list()
+    for dic in (VOLUME_INDICATORS, MOMENTUM_INDICATORS, VOLATILITY_INDICATORS, TREND_INDICATORS):
+        for k, v in dic.items():
+            if(v == 1):
+                inds.append(k)
     add_volume_indicators(df)
     add_momentum_indicators(df, 14)
     add_volatility_indicators(df)
     add_trend_indicators(df)
     add_others_indicators(df)
 
-    return df
+    return df, inds
 
 
 if __name__ == "__main__":
     df = pd.read_csv('datasets/BTCUSDT-1H.csv')
     # df = df.sort_values('Date')
-    df = AddIndicators(df)
+    df, inds = AddIndicators(df)
 
     test_df = df[-400:]
 
-    print(df)
+    # print(df)
     # Plot_OHCL(df)
