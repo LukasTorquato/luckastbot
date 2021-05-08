@@ -65,8 +65,8 @@ class CustomAgent:
         self.writer = SummaryWriter(self.log_name)
 
         # Create folder to save models
-        if not os.path.exists(self.log_name):
-            os.makedirs(self.log_name)
+        os.makedirs(self.log_name, exist_ok=True)
+        os.makedirs(self.log_name+"/models", exist_ok=True)
 
         self.start_training_log(
             initial_balance, normalize_value, train_episodes, training_batch_size, indicators)
@@ -158,9 +158,9 @@ class CustomAgent:
     def save(self, name="Crypto_trader", score="", args=[]):
         # save keras model weights
         self.Actor.Actor.save_weights(
-            f"{self.log_name}/{score}_{name}_Actor.h5")
+            f"{self.log_name}/models/{score}_{name}_Actor.h5")
         self.Critic.Critic.save_weights(
-            f"{self.log_name}/{score}_{name}_Critic.h5")
+            f"{self.log_name}/models/{score}_{name}_Critic.h5")
 
         # update json file settings
         if score != "":
@@ -515,7 +515,7 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[50, 50, 50],
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[256, 128, 64],
                         optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
                           num_worker=28, training_batch_size=500, visualize=False, EPISODES=50000)
