@@ -515,10 +515,16 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[256, 128, 64],
-                        optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
-    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=50000)
+
+    lr = [0.001, 0.0001, 0.00005, 0.00001]
+    net_batch_size = [32, 64, 128, 256]
+    for i in lr:
+        for k in net_batch_size:
+            for j in range(5, 25):
+                agent = CustomAgent(lookback_window_size=lookback_window_size, lr=i, epochs=j, layers=[64, 64, 64],
+                                    optimizer=Adam, batch_size=k, model="CNN", depth=depth, comment="Normalized")
+                train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+                                      num_worker=28, training_batch_size=500, visualize=False, EPISODES=5000, indicators=indicators)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")

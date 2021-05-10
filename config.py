@@ -31,7 +31,7 @@ TREND_INDICATORS = {"SMA": 0, "EMA": 0,
                     "ADX": 0, "PSAR": 0,
                     "MACD": 0, "ICMK": 0,
                     "CCI": 0}
-MOMENTUM_INDICATORS = {"RSI": 0, "STOCH": 0,
+MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0,
                        "AO": 0, "SRSI": 0,
                        "WR": 0, "UO": 0}
 VOLATILITY_INDICATORS = {"BOLB": 0}

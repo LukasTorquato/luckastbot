@@ -47,7 +47,7 @@ class Environment(Process):
                 [state, reward, done, reset, net_worth, episode_orders])
 
 
-def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker=4, training_batch_size=500, visualize=False, EPISODES=10000):
+def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_worker=4, training_batch_size=500, visualize=False, EPISODES=10000, indicators=""):
     works, parent_conns, child_conns = [], [], []
     episode = 0
     total_average = deque(maxlen=100)  # save recent 100 episodes net worth
@@ -67,7 +67,7 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
 
     # create TensorBoard writer
     agent.create_writer(env.initial_balance,
-                        env.normalize_value, EPISODES, training_batch_size)
+                        env.normalize_value, EPISODES, training_batch_size, indicators)
 
     states = [[] for _ in range(num_worker)]
     next_states = [[] for _ in range(num_worker)]
