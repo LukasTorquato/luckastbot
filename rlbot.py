@@ -516,11 +516,11 @@ if __name__ == "__main__":
 
     # multiprocessing training/testing. Note - run from cmd or terminal
 
-    lr = [0.001, 0.0001, 0.00005, 0.00001]
+    lr = [0.001, 0.0001]
     net_batch_size = [32, 64, 128, 256]
     for i in lr:
         for k in net_batch_size:
-            for j in range(5, 25):
+            for j in range(18, 25):
                 agent = CustomAgent(lookback_window_size=lookback_window_size, lr=i, epochs=j, layers=[64, 64, 64],
                                     optimizer=Adam, batch_size=k, model="CNN", depth=depth, comment="Normalized")
                 train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
