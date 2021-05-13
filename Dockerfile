@@ -1,9 +1,5 @@
-FROM byrontraining
+FROM byron
 
-WORKDIR /home/luckastbot/app
+WORKDIR /home
 
-CMD ["git", "pull"]
-CMD ["python", "./rlbot.py"]
-CMD ["git", "add ."]
-CMD ["git", "commit -m 'dockerfile test'"]
-CMD ["git", "push"]
+CMD sh commands.sh

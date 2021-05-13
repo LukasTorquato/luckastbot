@@ -522,7 +522,7 @@ if __name__ == "__main__":
     #     for k in net_batch_size:
     #         for j in range(18, 25):
     agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.001, epochs=25, layers=[64, 64, 64],
-                        optimizer=Adam, batch_size=32, model="CNN", depth=depth, comment="Normalized")
+                        optimizer=Adam, batch_size=64, model="CNN", depth=depth, comment="Normalized")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
                           num_worker=28, training_batch_size=500, visualize=False, EPISODES=5, indicators=indicators)
 
