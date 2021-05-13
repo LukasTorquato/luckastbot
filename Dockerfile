@@ -1,17 +1,9 @@
-FROM python:3.8.3
+FROM byrontraining
 
-WORKDIR /usr/src/app
+WORKDIR /home/luckastbot/app
 
-COPY datasets/BTCUSDT-1H.csv .
-COPY config.py .
-COPY indicators.py .
-COPY utils.py .
-COPY model.py .
-COPY multiprocessing_env.py .
-COPY rlbot.py .
-
-COPY requirements.txt .
-
-RUN pip install -r requirements.txt
-
+CMD ["git", "pull"]
 CMD ["python", "./rlbot.py"]
+CMD ["git", "add ."]
+CMD ["git", "commit -m 'dockerfile test'"]
+CMD ["git", "push"]
