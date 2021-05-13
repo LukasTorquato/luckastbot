@@ -15,7 +15,6 @@ from mplfinance.original_flavor import candlestick_ohlc
 import matplotlib.dates as mpl_dates
 from datetime import datetime
 import os
-import cv2
 import numpy as np
 
 
