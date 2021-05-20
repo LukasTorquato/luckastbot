@@ -518,7 +518,7 @@ if __name__ == "__main__":
 
     lr = [0.0001]
     for i in lr:
-        for k in [32, 64, 128, 256]:
+        for k in [32]:
             for j in [25]:
                 agent = CustomAgent(lookback_window_size=lookback_window_size, lr=i, epochs=j, layers=[64, 64, 64],
                                     optimizer=Adam, batch_size=k, model="CNN", depth=depth, comment="Normalized")
