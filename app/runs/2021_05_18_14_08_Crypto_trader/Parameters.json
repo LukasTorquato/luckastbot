@@ -1,0 +1,31 @@
+{
+    "training start": "2021-05-18 14:09",
+    "duration": 55.553109832604726,
+    "initial balance": 10000,
+    "training episodes": 5000,
+    "training batch size": 500,
+    "lookback window size": 100,
+    "depth": 7,
+    "lr": 1e-05,
+    "epochs": 5,
+    "batch size": 64,
+    "normalize value": 64000,
+    "model": "CNN",
+    "comment": "Normalized",
+    "saving time": "2021-05-18 14:21",
+    "Actor name": "10588.98_Crypto_trader_Actor.h5",
+    "Critic name": "10588.98_Crypto_trader_Critic.h5",
+    "Actor Nodes": [
+        64,
+        64,
+        64
+    ],
+    "Critic Nodes": [
+        64,
+        64,
+        64
+    ],
+    "Indicators": [
+        "RSI"
+    ]
+}
