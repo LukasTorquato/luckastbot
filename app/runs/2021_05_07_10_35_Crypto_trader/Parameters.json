@@ -1,6 +1,6 @@
 {
     "training start": "2021-05-07 10:36",
-    "duration": "",
+    "duration": 0,
     "initial balance": 10000,
     "training episodes": 5000,
     "training batch size": 500,
