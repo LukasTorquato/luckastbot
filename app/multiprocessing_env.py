@@ -11,6 +11,8 @@
 import numpy as np
 import json
 import time
+
+from config import *
 from tensorflow.keras.optimizers import Adam
 from multiprocessing import Process, Pipe
 from datetime import datetime
@@ -146,12 +148,12 @@ def train_multiprocessing(CustomEnv, agent, train_df, train_df_nomalized, num_wo
         work.join()
 
 
-def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=4, visualize=False, test_episodes=1000, folder="", name="", comment="", initial_balance=1000, Show_reward=False, Show_indicators=False):
+def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=4, visualize=False, test_episodes=1000, folder="", name="", comment="", initial_balance=INITIAL_CAPITAL, Show_reward=False, Show_indicators=False):
     with open(folder+"/Parameters.json", "r") as json_file:
         params = json.load(json_file)
     if name != "":
-        params["Actor name"] = f"{name}_Actor.h5"
-        params["Critic name"] = f"{name}_Critic.h5"
+        params["Actor name"] = "models/" + f"{name}_Actor.h5"
+        params["Critic name"] = "models/" + f"{name}_Critic.h5"
     name = params["Actor name"][:-9]
 
     agent = CustomAgent(lookback_window_size=params["lookback window size"],
@@ -208,7 +210,7 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
 
     print("No profit episodes: {}".format(no_profit_episodes))
     # save test results to test_results.txt file
-    with open("test_results.txt", "a+") as results:
+    with open(folder+"test_results.txt", "a+") as results:
         current_date = datetime.now().strftime('%Y-%m-%d %H:%M')
         results.write(f'{current_date}, {name}, test episodes:{test_episodes}')
         results.write(

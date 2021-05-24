@@ -495,7 +495,7 @@ if __name__ == "__main__":
     df_nomalized = Normalizing(df[99:])[1:].dropna()
     df = df[100:].dropna()
     lookback_window_size = 100
-    test_window = 720*6  # 3 months
+    test_window = 720*6  # 6 months
     # split training and testing datasets
     # we leave 100 to have properly calculated indicators
     train_df = df[:-test_window-lookback_window_size]
@@ -518,12 +518,12 @@ if __name__ == "__main__":
 
     lr = [0.0001]
     for i in lr:
-        for k in [32]:
-            for j in [25]:
+        for k in [128, 256]:
+            for j in [5, 10, 15, 20, 25]:
                 agent = CustomAgent(lookback_window_size=lookback_window_size, lr=i, epochs=j, layers=[64, 64, 64],
                                     optimizer=Adam, batch_size=k, model="CNN", depth=depth, comment="Normalized")
                 train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
                                       num_worker=28, training_batch_size=500, visualize=False, EPISODES=5000, indicators=indicators)
 
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker = 16, visualize=False, test_episodes=1000, folder="2021_02_18_21_48_Crypto_trader", name="3906.52_Crypto_trader", comment="3 months")
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=16, visualize=True,test_episodes=1000, folder="2021_02_21_17_54_Crypto_trader", name="3263.63_Crypto_trader", comment="3 months")
+    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=28, visualize=False,
+    #                      test_episodes=1000, folder="runs/2021_05_05_11_05_Crypto_trader", name="11382.44_Crypto_trader", comment="6 months")

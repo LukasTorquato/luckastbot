@@ -14,6 +14,7 @@ for root, directories, files in os.walk("../runs", topdown=True):
                 params = json.load(json_file)
 
                 row = [objetivo,
+                       params.get("training start", ''),
                        int(params.get("duration", 0)),
                        params.get("initial balance", ''),
                        params.get("training episodes", ''),
