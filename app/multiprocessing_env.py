@@ -210,7 +210,7 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
 
     print("No profit episodes: {}".format(no_profit_episodes))
     # save test results to test_results.txt file
-    with open(folder+"test_results.txt", "a+") as results:
+    with open(folder+"/test_results.txt", "a+") as results:
         current_date = datetime.now().strftime('%Y-%m-%d %H:%M')
         results.write(f'{current_date}, {name}, test episodes:{test_episodes}')
         results.write(

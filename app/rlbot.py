@@ -483,7 +483,7 @@ def test_agent(test_df, test_df_nomalized, visualize=True, test_episodes=10, fol
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('datasets/BTCUSDT-1H.csv')
+    df = pd.read_csv('datasets/BTCUSDT-1H-StableMarket.csv')
     # df = df.dropna()
     # df = df.sort_values('Date')
 
@@ -515,15 +515,10 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-
-    lr = [0.0001]
-    for i in lr:
-        for k in [128, 256]:
-            for j in [5, 10, 15, 20, 25]:
-                agent = CustomAgent(lookback_window_size=lookback_window_size, lr=i, epochs=j, layers=[64, 64, 64],
-                                    optimizer=Adam, batch_size=k, model="CNN", depth=depth, comment="Normalized")
-                train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                                      num_worker=28, training_batch_size=500, visualize=False, EPISODES=5000, indicators=indicators)
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[512, 256, 128],
+                        optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Normalized")
+    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=100000, indicators=indicators)
 
     # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=28, visualize=False,
     #                      test_episodes=1000, folder="runs/2021_05_05_11_05_Crypto_trader", name="11382.44_Crypto_trader", comment="6 months")

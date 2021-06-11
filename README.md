@@ -25,3 +25,4 @@ Not in use (yet):
   - self.action_space = Ampliar possibilidades invés de buy, sell e hold. -> Step function:280
   - self.state_size = Entender o funcionamento
   - get_reward = Otimizar o reward da rede
+  - Especificar a motivação da fixação dos parametros
