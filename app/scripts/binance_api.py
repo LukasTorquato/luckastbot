@@ -163,7 +163,7 @@ class BinanceAPI:
         try:
             klines = pd.DataFrame()
             history = self.client.get_historical_klines(
-                pair, k_interval, "24 Jun, 2019")
+                pair, k_interval, "09 May, 2020")
             # pair, k_interval, str(days_ago)+"days ago UTC")
             klines = klines.append(history, ignore_index=True)
             klines = klines.rename(columns={0: 'Open Time', 1: 'Open', 2: 'High', 3: 'Low',
