@@ -1,1 +1,0 @@
-2021-05-22 15:55, models/11259.99_Crypto_trader, test episodes:1000, net worth:3799.7145505789913, orders per episode:282.08, no profit episodes:0, model: CNN, comment: 6 months

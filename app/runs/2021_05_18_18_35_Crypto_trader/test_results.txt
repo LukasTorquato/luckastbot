@@ -1,1 +1,0 @@
-2021-05-31 17:38, models/11259.99_Crypto_trader, test episodes:1000, net worth:4935.778244332179, orders per episode:134.374, no profit episodes:1000, model: CNN, comment: 6 months BEAR MARKET

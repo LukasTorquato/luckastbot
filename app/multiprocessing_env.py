@@ -224,3 +224,5 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
         work.terminate()
         print('TERMINATED:', work)
         work.join()
+
+    return average_net_worth/(episode+1)

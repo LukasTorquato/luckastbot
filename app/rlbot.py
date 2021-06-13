@@ -483,7 +483,7 @@ def test_agent(test_df, test_df_nomalized, visualize=True, test_episodes=10, fol
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('datasets/BTCUSDT-1H-StableMarket.csv')
+    df = pd.read_csv('datasets/BTCUSDT-1H-BearMarket2.csv')
     # df = df.dropna()
     # df = df.sort_values('Date')
 
@@ -495,9 +495,9 @@ if __name__ == "__main__":
     df_nomalized = Normalizing(df[99:])[1:].dropna()
     df = df[100:].dropna()
     lookback_window_size = 100
-    test_window = 720*6  # 6 months
+    test_window = 0  # 720*6  # 6 months
     # split training and testing datasets
-    # we leave 100 to have properly calculated indicators
+    # # we leave 100 to have properly calculated indicators
     train_df = df[:-test_window-lookback_window_size]
     test_df = df[-test_window-lookback_window_size:]
 
@@ -516,9 +516,15 @@ if __name__ == "__main__":
 
     # multiprocessing training/testing. Note - run from cmd or terminal
     agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[512, 256, 128],
-                        optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Normalized")
+                        optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Bear Market 2")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=100000, indicators=indicators)
+                          num_worker=16, training_batch_size=500, visualize=False, EPISODES=150000, indicators=indicators)
 
-    # test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num_worker=28, visualize=False,
-    #                      test_episodes=1000, folder="runs/2021_05_05_11_05_Crypto_trader", name="11382.44_Crypto_trader", comment="6 months")
+    # for root, directories, files in os.walk("../runs", topdown=True):
+    #     for dic in directories:
+    #         if dic.lower() == "models":
+    #             file = "../runs/"+dic+"/Parameters.json"
+    #             with open(file, "r") as json_file:
+    #                 params = json.load(json_file)
+    # test_multiprocessing(CustomEnv, CustomAgent, train_df, train_df_nomalized, num_worker=28, visualize=False,
+    #                     test_episodes=1000, folder="runs/2021_06_12_01_14_Crypto_trader", name="62154.64_Crypto_trader", comment="Bear Market 2")
