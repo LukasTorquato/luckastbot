@@ -182,6 +182,7 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
     for worker_id, parent_conn in enumerate(parent_conns):
         state[worker_id] = parent_conn.recv()
 
+    print("Name: "+name+" starting...")
     while episode < test_episodes:
         predictions_list = agent.Actor.actor_predict(
             np.reshape(state, [num_worker]+[_ for _ in state[0].shape]))
@@ -224,5 +225,3 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
         work.terminate()
         print('TERMINATED:', work)
         work.join()
-
-    return average_net_worth/(episode+1)
