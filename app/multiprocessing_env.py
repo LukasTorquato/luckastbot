@@ -213,11 +213,10 @@ def test_multiprocessing(CustomEnv, CustomAgent, test_df, test_df_nomalized, num
     # save test results to test_results.txt file
     with open(folder+"/test_results.txt", "a+") as results:
         current_date = datetime.now().strftime('%Y-%m-%d %H:%M')
-        results.write(f'{current_date}, {name}, test episodes:{test_episodes}')
+        results.write(f'{current_date}, {name}, {test_episodes}')
         results.write(
-            f', net worth:{average_net_worth/(episode+1)}, orders per episode:{average_orders/test_episodes}')
-        results.write(
-            f', no profit episodes:{no_profit_episodes}, model: {agent.model}, comment: {comment}\n')
+            f', {average_net_worth/(episode+1)}, {average_orders/test_episodes}')
+        results.write(f', {no_profit_episodes}, {agent.model}, {comment}\n')
 
     # terminating processes after while loop
     works.append(work)
