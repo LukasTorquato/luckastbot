@@ -516,10 +516,10 @@ if __name__ == "__main__":
     #             train_episodes=1000, training_batch_size=500)
 
     # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[256, 128, 64],
+    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[128, 64, 32],
                         optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Bear Market 1")
     train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=150000, indicators=indicators)
+                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=100000, indicators=indicators)
 
     ##### TESTING #####
     # training_folder = "2021_06_12_01_14_Crypto_trader"
