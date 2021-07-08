@@ -22,6 +22,8 @@ class TransformerBlock(layers.Layer):
         ffn_output = self.dropout2(ffn_output, training=training)
         return self.layernorm2(out1 + ffn_output)
 
+# Two seperate embedding layers, one for tokens, one for token index (positions).
+
 class TokenAndPositionEmbedding(layers.Layer):
     def __init__(self, maxlen, vocab_size, embed_dim):
         super(TokenAndPositionEmbedding, self).__init__()
@@ -35,14 +37,19 @@ class TokenAndPositionEmbedding(layers.Layer):
         x = self.token_emb(x)
         return x + positions
 
+#Download and prepare dataset
+
 vocab_size = 20000  # Only consider the top 20k words
 maxlen = 200  # Only consider the first 200 words of each movie review
 (x_train, y_train), (x_val, y_val) = keras.datasets.imdb.load_data(num_words=vocab_size)
 print(len(x_train), "Training sequences")
+print(x_train)
 print(len(x_val), "Validation sequences")
 x_train = keras.preprocessing.sequence.pad_sequences(x_train, maxlen=maxlen)
 x_val = keras.preprocessing.sequence.pad_sequences(x_val, maxlen=maxlen)
 
+# Transformer layer outputs one vector for each time step of our input sequence. Here, we take the mean across all time steps and use a
+#  feed forward network on top of it to classify text.
 
 embed_dim = 32  # Embedding size for each token
 num_heads = 2  # Number of attention heads
@@ -65,3 +72,5 @@ model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
 history = model.fit(
     x_train, y_train, batch_size=32, epochs=2, validation_data=(x_val, y_val)
 )
+
+model.predict_classes()
