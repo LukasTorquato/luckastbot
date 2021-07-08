@@ -28,11 +28,11 @@ INITIAL_CAPITAL = 10000
 
 # Technical Indicators
 TREND_INDICATORS = {"SMA": 1, "EMA": 0,
-                    "ADX": 0, "PSAR": 1,
+                    "ADX": 0, "PSAR": 0,
                     "MACD": 1, "ICMK": 1,
                     "CCI": 0}
 MOMENTUM_INDICATORS = {"RSI": 1, "STOCH": 0,
-                       "AO": 0, "SRSI": 1,
+                       "AO": 0, "SRSI": 0,
                        "WR": 0, "UO": 0}
-VOLATILITY_INDICATORS = {"BOLB": 1}
+VOLATILITY_INDICATORS = {"BOLB": 0}
 VOLUME_INDICATORS = {"OBV": 0}

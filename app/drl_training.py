@@ -484,30 +484,30 @@ def test_agent(test_df, test_df_nomalized, visualize=True, test_episodes=10, fol
 
 
 if __name__ == "__main__":
-    df = pd.read_csv('datasets/BTCUSDT-1H-BearMarket1.csv')
-    # df = df.dropna()
-    # df = df.sort_values('Date')
 
-    # insert indicators to df 2021_02_21_17_54_Crypto_trader
+    # Lê o dataset
+    df = pd.read_csv('datasets/BTCUSDT-1H-BearMarket3.csv')
+
+    # Adiciona Indicadores
     df, indicators = AddIndicators(df)
-    # df = indicators_dataframe(df, threshold=0.5, plot=False) # insert indicators to df 2021_02_18_21_48_Crypto_trader
+
+    # Verifica a quantidade de colunas no dataframe
     depth = len(list(df.columns[1:]))  # OHCL + indicators without Date
 
     df_nomalized = Normalizing(df[99:])[1:].dropna()
     df = df[100:].dropna()
     lookback_window_size = 100
     test_window = 0  # 720*6  # 6 months
+
     # split training and testing datasets
     # # we leave 100 to have properly calculated indicators
     train_df = df[:-test_window-lookback_window_size]
     test_df = df[-test_window-lookback_window_size:]
 
-    # split training and testing normalized datasets
-    # we leave 100 to have properly calculated indicators
     train_df_nomalized = df_nomalized[:-test_window-lookback_window_size]
     test_df_nomalized = df_nomalized[-test_window-lookback_window_size:]
-    # print(train_df)
-    # single processing training
+
+    ############ Single Processing Training ############
     # agent = CustomAgent(lookback_window_size=lookback_window_size, depth=depth, lr=0.00001,
     #                     epochs=5, optimizer=Adam, batch_size=32, model="CNN", comment="Normalized")
     # train_env = CustomEnv(df=train_df, df_normalized=train_df_nomalized,
@@ -515,25 +515,32 @@ if __name__ == "__main__":
     # train_agent(train_env, agent, visualize=False,
     #             train_episodes=1000, training_batch_size=500)
 
-    # multiprocessing training/testing. Note - run from cmd or terminal
-    agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[256, 128, 64],
-                        optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Bear Market 1")
-    train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
-                          num_worker=28, training_batch_size=500, visualize=False, EPISODES=150000, indicators=indicators)
+    ############# Multiprocessing Training ###############
+    # agent = CustomAgent(lookback_window_size=lookback_window_size, lr=0.00001, epochs=5, layers=[56, 40, 24],
+    #                     optimizer=Adam, batch_size=128, model="CNN", depth=depth, comment="Bear Market 1")
+    # train_multiprocessing(CustomEnv=CustomEnv, agent=agent, train_df=train_df, train_df_nomalized=train_df_nomalized,
+    #                       num_worker=28, training_batch_size=500, visualize=False, EPISODES=100000, indicators=indicators)
 
-    ##### TESTING #####
-    # training_folder = "2021_06_12_01_14_Crypto_trader"
-    # for root, directories, files in os.walk("runs/"+training_folder+"/models", topdown=True):
-    #     for file in files:
-    #         if(file[-10:] != "_Critic.h5"):
-    #             model = file.replace("_Actor.h5", '')
-    #             test_multiprocessing(CustomEnv, CustomAgent, train_df, train_df_nomalized, num_worker=20, visualize=False,
-    #                                  test_episodes=500, folder="runs/"+training_folder, name=model, comment="Bear Market 2")
+    ##################### SINGLE MODEL TESTING #######################
+    # training_folder = "2021_06_30_09_05_Crypto_trader"
+    # model = "13401.58_Crypto_trader"
+    # test_multiprocessing(CustomEnv, CustomAgent, train_df, train_df_nomalized, num_worker=20, visualize=False,
+    #                      test_episodes=500, folder="runs/"+training_folder, name=model, comment="Bull Market 2")
 
-    #             shutil.copy("runs/"+training_folder+"/models/"+model+"_Actor.h5",
-    #                         "runs/"+training_folder+"/tested models/"+model+"_Actor.h5")
-    #             os.remove("runs/"+training_folder+"/models/"+model+"_Actor.h5")
-    #             shutil.copy("runs/"+training_folder+"/models/"+model+"_Critic.h5",
-    #                         "runs/"+training_folder+"/tested models/"+model+"_Critic.h5")
-    #             os.remove("runs/"+training_folder +
-    #                       "/models/"+model+"_Critic.h5")
+    ##################### LONG TESTING #######################
+    training_folder = "2021_07_04_00_02_Crypto_trader"
+    for root, directories, files in os.walk("runs/"+training_folder+"/models", topdown=True):
+        for file in files:
+            if(file[-10:] != "_Critic.h5"):
+                model = file.replace("_Actor.h5", '')
+                test_multiprocessing(CustomEnv, CustomAgent, train_df, train_df_nomalized, num_worker=20, visualize=False,
+                                     test_episodes=500, folder="runs/"+training_folder, name=model, comment="Bear Market 3")
+
+                # Change models from models folder to tested models folder
+                shutil.copy("runs/"+training_folder+"/models/"+model+"_Actor.h5",
+                            "runs/"+training_folder+"/tested models/"+model+"_Actor.h5")
+                os.remove("runs/"+training_folder+"/models/"+model+"_Actor.h5")
+                shutil.copy("runs/"+training_folder+"/models/"+model+"_Critic.h5",
+                            "runs/"+training_folder+"/tested models/"+model+"_Critic.h5")
+                os.remove("runs/"+training_folder +
+                          "/models/"+model+"_Critic.h5")
