@@ -1,7 +1,7 @@
 from binance.client import Client
 from binance.enums import *
 from binance.exceptions import *
-import matplotlib
+from binance import ThreadedWebsocketManager
 import numpy as np
 import pandas as pd
 
