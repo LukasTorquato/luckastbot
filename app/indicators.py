@@ -129,20 +129,22 @@ def add_others_indicators(df):
     pass
 
 
-def AddIndicators(df):
+def AddIndicators(df, runtime=False):
 
-    inds = list()
-    for dic in (VOLUME_INDICATORS, MOMENTUM_INDICATORS, VOLATILITY_INDICATORS, TREND_INDICATORS):
-        for k, v in dic.items():
-            if(v == 1):
-                inds.append(k)
     add_volume_indicators(df)
     add_momentum_indicators(df, 14)
     add_volatility_indicators(df)
     add_trend_indicators(df)
     add_others_indicators(df)
-
-    return df, inds
+    if not runtime:
+        inds = list()
+        for dic in (VOLUME_INDICATORS, MOMENTUM_INDICATORS, VOLATILITY_INDICATORS, TREND_INDICATORS):
+            for k, v in dic.items():
+                if(v == 1):
+                    inds.append(k)
+        return df, inds
+    else:
+        return df
 
 
 if __name__ == "__main__":

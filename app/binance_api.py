@@ -143,13 +143,18 @@ class BinanceAPI:
             recent = self.client.get_klines(symbol=pair, interval=k_interval)
             klines = klines.append(recent, ignore_index=True)
             klines = klines.rename(columns={0: 'Open Time', 1: 'Open', 2: 'High', 3: 'Low',
-                                            4: 'Close', 5: 'Inner Volume', 6: 'Close Time', 7: 'Outer Volume', 8: 'N. Trades'})
+                                            4: 'Close', 7: 'Outer Volume', 8: 'N. Trades'})
+
             if not inUnix:
                 klines['Open Time'] = pd.to_datetime(
                     klines['Open Time'], unit='ms')
-                klines['Close Time'] = pd.to_datetime(
-                    klines['Close Time'], unit='ms')
-            return klines.drop([9, 10, 11], axis=1)
+                # klines['Close Time'] = pd.to_datetime(
+                #     klines['Close Time'], unit='ms')
+            # klines.drop('Close Time', inplace=True, axis=1)
+            # klines.drop('Inner Volume', inplace=True, axis=1)
+            klines.rename(columns={"Open Time": "Date",
+                                   "Outer Volume": "Volume"}, inplace=True)
+            return klines.drop([5, 6, 9, 10, 11], axis=1)
         except BinanceAPIException as e:
             if (e.code == -1100):  # Illegal Character no Par
                 print("No klines found: Invalid character - "+pair)
