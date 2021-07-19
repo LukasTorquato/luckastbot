@@ -39,32 +39,21 @@ class ByronBot:
         pass
 
 
-def isFloat(x):
-    try:
-        float(x)
-        return True
-    except:
-        return False
-
-
 def update_queue(msg):
     # print(f"message type: {msg['e']}")
     global window
-    update = {key: float(value) for key, value
-              in msg['k'].items()
-              if isFloat(value)}
-    # update = [dict([a, float(x)] for a, x in msg['k'].items())]
+    update = msg['k']
 
-    if (window.iloc[-1, window.columns.get_loc('Date')] == msg['k']['t']):
-        window.iloc[-1, window.columns.get_loc('Open')] = update['o']
-        window.iloc[-1, window.columns.get_loc('High')] = update['h']
-        window.iloc[-1, window.columns.get_loc('Low')] = update['l']
-        window.iloc[-1, window.columns.get_loc('Close')] = update['c']
-        window.iloc[-1, window.columns.get_loc('Volume')] = update['q']
-        window.iloc[-1, window.columns.get_loc('N. Trades')] = update['n']
+    if (window.iloc[-1, window.columns.get_loc('Date')] == update['t']):
+        window.iloc[-1, window.columns.get_loc('Open')] = float(update['o'])
+        window.iloc[-1, window.columns.get_loc('High')] = float(update['h'])
+        window.iloc[-1, window.columns.get_loc('Low')] = float(update['l'])
+        window.iloc[-1, window.columns.get_loc('Close')] = float(update['c'])
+        window.iloc[-1, window.columns.get_loc('Volume')] = float(update['q'])
+        window.iloc[-1, window.columns.get_loc('N. Trades')] = int(update['n'])
     else:
-        window = window.append({'Date': update['t'], 'Open': update['o'], 'High': update['h'], 'Low': update['l'],
-                                'Close': update['c'], 'Volume': update['q'], 'N. Trades': update['n']}, ignore_index=True)
+        window = window.append([{'Date': update['t'], 'Open': float(update['o']), 'High': float(update['h']), 'Low': float(update['l']),
+                                'Close': float(update['c']), 'Volume': float(update['q']), 'N. Trades': int(update['n'])}], ignore_index=True)
         window.drop(index=window.index[0], inplace=True)
 
     window = AddIndicators(window, runtime=True)
